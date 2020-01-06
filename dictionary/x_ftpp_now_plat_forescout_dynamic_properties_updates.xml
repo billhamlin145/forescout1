@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?><database>
+    <element label="ForeScout Dynamic Properties Updates" max_length="40" name="x_ftpp_now_plat_forescout_dynamic_properties_updates" type="collection">
+        <element attributes="edge_encryption_enabled=true" label="Active" max_length="40" name="active" type="boolean"/>
+        <element label="CounterACT" mandatory="true" max_length="1024" name="counteract" type="string"/>
+        <element label="Processed" max_length="40" name="processed" type="glide_date_time"/>
+        <element display="true" label="Property metadata" mandatory="true" max_length="4000" name="property_metadata" type="string"/>
+        <index name="index">
+            <element name="sys_created_on"/>
+            <element name="active"/>
+        </index>
+    </element>
+</database>

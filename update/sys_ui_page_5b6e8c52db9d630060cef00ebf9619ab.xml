@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ui_page">
+    <sys_ui_page action="INSERT_OR_UPDATE">
+        <category>general</category>
+        <client_script><![CDATA[function updateParam(actionId) {
+	var action = new GlideRecord('x_ftpp_now_plat_forescout_supported_actions');
+	var numOfParam = "-1";
+	if (action.get(actionId)) {
+		numOfParam = action.getValue('max_params');
+	}
+	switch (numOfParam) {
+		case "0":
+			document.getElementById('forescout_action_param1').setAttribute('disabled', 'true');
+			document.getElementById('forescout_action_param2').setAttribute('disabled', 'true');
+			break;
+		case "1":
+			document.getElementById('forescout_action_param1').removeAttribute('disabled');
+			document.getElementById('forescout_action_param2').setAttribute('disabled', 'true');
+			break;
+		case "2":
+			document.getElementById('forescout_action_param1').removeAttribute('disabled');
+			document.getElementById('forescout_action_param2').removeAttribute('disabled');
+			break;
+		default:
+			document.getElementById('forescout_action_param1').removeAttribute('disabled');
+			document.getElementById('forescout_action_param2').removeAttribute('disabled');
+	}
+}
+
+function onCancel() { 
+	GlideDialogWindow.get().destroy();
+	return false;
+}
+
+function onSubmit() {
+	// validate input
+	var invalidFields = [];
+	var actionId = gel('forescout_action_name').value;
+	var actionParam1 = gel('forescout_action_param1').value;
+	var actionParam2 = gel('forescout_action_param2').value;
+	
+	if (actionId == "") {
+		invalidFields.push(getMessage('Enter an action name'));
+	} else {
+		var action = new GlideRecord('x_ftpp_now_plat_forescout_supported_actions');
+		if (action.get(actionId)) {
+			var numOfParam = action.getValue('max_params');
+			if (numOfParam > 0 && actionParam1 == "") {
+				invalidFields.push(getMessage('Enter action parameters'));
+			}
+		} else {
+			invalidFields.push(getMessage('Enter a valid action name'));
+		}
+	}
+	var message = "";
+	for(var i=0; i<invalidFields.length; i++){
+		message += " - " + invalidFields[i] + "\n";
+	}
+	
+	if (invalidFields.length>0) {
+		alert("${gs.getMessage('Please correct the following')}:\n" + message);
+		return false;
+	}
+	return true;
+}]]></client_script>
+        <description>Popup window for requesting forescout action</description>
+        <direct>false</direct>
+        <endpoint>x_ftpp_now_plat_forescout_action_popup.do</endpoint>
+        <html><![CDATA[<?xml version="1.0" encoding="utf-8" ?>
+<j:jelly trim="false" xmlns:j="jelly:core" xmlns:g="glide" xmlns:j2="null" xmlns:g2="null">
+	<g:ui_form>
+		<table style="width:450px">
+			<input type="hidden" id="table" name="table" value="${HTML,JS:sysparm_table}"/>
+			<input type="hidden" id="incident_id" name="incident_id" value="${HTML,JS:sysparm_sys_id}"/>
+			<tr>
+				<td>
+					<label for="forescout_action_name">${gs.getMessage('Action Name')}</label>
+				</td>
+				<td style="width:300px" nowrap="true" align="left">
+					<g:ui_reference name="forescout_action_name" id="forescout_action_name" table="x_ftpp_now_plat_forescout_supported_actions" onchange="updateParam(this.value);"/>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<label for="forescout_action_param1">${gs.getMessage('Action Param1')}</label>
+				</td>
+				<td>
+					<input class="form-control" id="forescout_action_param1" name="forescout_action_param1"/>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<label for="forescout_action_param2">${gs.getMessage('Action Param2')}</label>
+				</td>
+				<td>
+					<input class="form-control" id="forescout_action_param2" name="forescout_action_param2"/>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2" height="20px"></td>
+			</tr>
+		</table>
+	 	<footer class="modal-footer">
+			<g:dialog_button class="btn-default btn" style="min-width: 5em" onclick="return onCancel();" name="cancel" id="cancel" type="cancel">${gs.getMessage('Cancel')}</g:dialog_button>
+			<g:dialog_button class="btn-primary btn" style="min-width: 5em" onclick="return onSubmit();" name="submit" id="submit" type="submit">${gs.getMessage('Submit')}</g:dialog_button>
+		</footer>
+    </g:ui_form>
+</j:jelly> 
+]]></html>
+        <name>forescout_action_popup</name>
+        <processing_script><![CDATA[var table = request.getParameter("table");
+var incidentId = request.getParameter("incident_id");
+var actionName = request.getParameter("forescout_action_name");
+var actionParam1 = request.getParameter("forescout_action_param1");
+var actionParam2 = request.getParameter("forescout_action_param2");
+var incident = new GlideRecord(table);
+if (incident.get(incidentId)) {
+	var action = new GlideRecord('x_ftpp_now_plat_forescout_supported_actions');
+	if (action.get(actionName)) {
+		var eventName = 'x_ftpp_now_plat.' + action.getValue('name');
+		gs.info("Request ForeScout Action: [" + eventName + "]; Param1 [" + actionParam1 + "]; Param2 [" + actionParam2 + "] on incident [" + incident.getValue('number') + "]");
+		var eventHandler = new x_ftpp_now_plat.FSEventHandler();
+		eventHandler.addToEventQueue(eventName, incident, actionParam1, actionParam2);
+		incident.work_notes = "Requested ForeScout Action: Name [" + action.getValue('label') + "]; Param1 [" + actionParam1 + "]; Param2 [" + actionParam2 + "]";
+		incident.update();
+	} else {
+		gs.error("Invalid action " + actionName);
+	}
+} else {
+	gs.error("Incident " + incidentId + " doesn't exist.");
+}
+
+response.sendRedirect(request.getParameter('table') + ".do?sys_id=" + incidentId);
+]]></processing_script>
+        <sys_class_name>sys_ui_page</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-10-23 22:46:17</sys_created_on>
+        <sys_id>5b6e8c52db9d630060cef00ebf9619ab</sys_id>
+        <sys_mod_count>5</sys_mod_count>
+        <sys_name>forescout_action_popup</sys_name>
+        <sys_package display_value="ForeScout App for Asset Management" source="x_ftpp_now_plat">b45f12b8db19af4006629c27db961996</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ForeScout App for Asset Management">b45f12b8db19af4006629c27db961996</sys_scope>
+        <sys_update_name>sys_ui_page_5b6e8c52db9d630060cef00ebf9619ab</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2019-01-25 00:13:40</sys_updated_on>
+    </sys_ui_page>
+</record_update>

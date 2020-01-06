@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update>
+    <sys_ui_list parent="" relationship="" sys_domain="global" table="x_ftpp_now_plat_forescout_supported_actions" version="2" view="sys_ref_list">
+        <sys_ui_list_element action="INSERT_OR_UPDATE">
+            <average_value>false</average_value>
+            <element>label</element>
+            <list_id display_value="x_ftpp_now_plat_forescout_supported_actions" element="NULL" name="x_ftpp_now_plat_forescout_supported_actions" parent="NULL" relationship="NULL" sys_domain="global" view="ee721371db312300d671440805961905">68867464dbae238006629c27db96194c</list_id>
+            <max_value>false</max_value>
+            <min_value>false</min_value>
+            <position>0</position>
+            <sum>false</sum>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2018-12-19 18:28:14</sys_created_on>
+            <sys_id>ac867464dbae238006629c27db96194c</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2018-12-19 18:28:14</sys_updated_on>
+        </sys_ui_list_element>
+        <sys_ui_list action="INSERT_OR_UPDATE">
+            <average_value>false</average_value>
+            <element/>
+            <max_value>false</max_value>
+            <min_value>false</min_value>
+            <name>x_ftpp_now_plat_forescout_supported_actions</name>
+            <parent/>
+            <position/>
+            <relationship/>
+            <sum>false</sum>
+            <sys_class_name>sys_ui_list</sys_class_name>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2018-12-19 18:28:14</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>68867464dbae238006629c27db96194c</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_name>x_ftpp_now_plat_forescout_supported_actions</sys_name>
+            <sys_package display_value="ForeScout App for Asset Management" source="x_ftpp_now_plat">b45f12b8db19af4006629c27db961996</sys_package>
+            <sys_policy/>
+            <sys_scope display_value="ForeScout App for Asset Management">b45f12b8db19af4006629c27db961996</sys_scope>
+            <sys_update_name>sys_ui_list_x_ftpp_now_plat_forescout_supported_actions_sys_ref_list</sys_update_name>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2018-12-19 18:28:14</sys_updated_on>
+            <sys_user/>
+            <view display_value="Reference List" name="sys_ref_list">ee721371db312300d671440805961905</view>
+            <view_name/>
+        </sys_ui_list>
+    </sys_ui_list>
+</record_update>

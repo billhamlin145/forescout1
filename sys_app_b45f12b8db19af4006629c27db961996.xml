@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_app">
+    <sys_app action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <can_edit_in_studio>false</can_edit_in_studio>
+        <enforce_license>log</enforce_license>
+        <guided_setup_guid/>
+        <js_level>helsinki_es5</js_level>
+        <licensable>true</licensable>
+        <license_category/>
+        <license_model>none</license_model>
+        <logo/>
+        <menu display_value="ForeScout App for Asset Management">aae25b39dbdd230060cef00ebf9619e3</menu>
+        <name>ForeScout App for Asset Management</name>
+        <private>false</private>
+        <restrict_table_access>false</restrict_table_access>
+        <runtime_access_tracking>permissive</runtime_access_tracking>
+        <scope>x_ftpp_now_plat</scope>
+        <scoped_administration>false</scoped_administration>
+        <short_description>Automate asset discovery, improve asset compliance and boost IT service efficiency</short_description>
+        <source>x_ftpp_now_plat</source>
+        <store_correlation_id>REPOAPP0000098713</store_correlation_id>
+        <store_url/>
+        <sys_class_name>sys_app</sys_class_name>
+        <sys_code/>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-10-19 17:26:11</sys_created_on>
+        <sys_id>b45f12b8db19af4006629c27db961996</sys_id>
+        <sys_mod_count>43</sys_mod_count>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2019-01-30 15:24:56</sys_updated_on>
+        <template/>
+        <trackable>true</trackable>
+        <user_role display_value="x_ftpp_now_plat.user" name="x_ftpp_now_plat.user">43901625db95ef4060cef00ebf961967</user_role>
+        <vendor/>
+        <vendor_prefix/>
+        <version>2.0.14</version>
+    </sys_app>
+    <sys_attachment action="INSERT_OR_UPDATE">
+        <average_image_color>#22aaee</average_image_color>
+        <chunk_size_bytes>734003</chunk_size_bytes>
+        <compressed>true</compressed>
+        <content_type>image/png</content_type>
+        <encryption_context/>
+        <file_name>logo</file_name>
+        <hash/>
+        <image_height>100</image_height>
+        <image_width>100</image_width>
+        <size_bytes>3373</size_bytes>
+        <size_compressed>3325</size_compressed>
+        <state/>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2019-01-30 15:18:56</sys_created_on>
+        <sys_id>81fd1c46db97a74006629c27db961942</sys_id>
+        <sys_mod_count>2</sys_mod_count>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2019-01-30 15:18:56</sys_updated_on>
+        <table_name>ZZ_YYsys_app</table_name>
+        <table_sys_id>b45f12b8db19af4006629c27db961996</table_sys_id>
+    </sys_attachment>
+    <sys_attachment_doc action="INSERT_OR_UPDATE">
+        <data>H4sIAAAAAAAAAA==</data>
+        <length>16</length>
+        <position>0</position>
+        <sys_attachment display_value="logo" sys_id="81fd1c46db97a74006629c27db961942">81fd1c46db97a74006629c27db961942</sys_attachment>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2019-01-30 15:18:56</sys_created_on>
+        <sys_id>c1fd1c46db97a74006629c27db961942</sys_id>
+    </sys_attachment_doc>
+    <sys_attachment_doc action="INSERT_OR_UPDATE">
+        <data>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</data>
+        <length>4420</length>
+        <position>1</position>
+        <sys_attachment display_value="logo" sys_id="81fd1c46db97a74006629c27db961942">81fd1c46db97a74006629c27db961942</sys_attachment>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2019-01-30 15:18:56</sys_created_on>
+        <sys_id>45fd1c46db97a74006629c27db961942</sys_id>
+    </sys_attachment_doc>
+</record_update>

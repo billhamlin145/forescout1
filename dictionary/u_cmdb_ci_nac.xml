@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?><database>
+    <element label="CMDB CI Nac" max_length="40" name="u_cmdb_ci_nac" type="collection">
+        <element label="ForeScout Tenant ID" max_length="100" name="x_ftpp_now_plat_forescout_tenant_id" type="string"/>
+    </element>
+</database>

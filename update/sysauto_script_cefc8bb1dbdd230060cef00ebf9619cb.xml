@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sysauto_script">
+    <sysauto_script action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <condition/>
+        <conditional>false</conditional>
+        <name>Update ForeScout Dynamic Properties</name>
+        <run_as/>
+        <run_as_tz/>
+        <run_dayofmonth>1</run_dayofmonth>
+        <run_dayofweek>1</run_dayofweek>
+        <run_period>1970-01-01 00:01:00</run_period>
+        <run_start/>
+        <run_time>1970-01-01 08:00:00</run_time>
+        <run_type>periodically</run_type>
+        <script><![CDATA[// Send records in x_ftpp_now_plat_forescout_dynamic_properties_updates to CounterACT in batch
+var uuid = gs.generateGUID();
+gs.info("Scheduled Job for batching dynamic property update. UUID [" + uuid + "]");
+var update = new GlideRecord('x_ftpp_now_plat_forescout_dynamic_properties_updates');
+update.addQuery('active', 'true');
+update.orderBy('sys_created_on');
+update.query();
+var cnt = 0;
+var batchingUpdatesToSend = {};
+var processingUpdatesSysId = [];
+var jsonUtil = new global.JSON();
+var messageSender = new x_ftpp_now_plat.FSSendMessageToCounterACT();
+while (update.next()) {
+	if (cnt == 1000) {
+		sendUpdate(batchingUpdatesToSend, uuid, processingUpdatesSysId);
+		batchingUpdatesToSend = {};
+		processingUpdatesSysId = [];
+		cnt = 0;
+		uuid = gs.generateGUID();
+	} else {
+		// Batching updates
+		if (!(update.counteract in batchingUpdatesToSend)) {
+			batchingUpdatesToSend[update.counteract] = [];
+		}
+		batchingUpdatesToSend[update.counteract].push(jsonUtil.decode(update.property_metadata));
+		gs.debug("Batching property update [" + update.property_metadata + "]");
+		processingUpdatesSysId.push(update.sys_id.toString());
+		gs.debug("Processing [" + update.sys_id + "]");
+		cnt++;
+	}
+}
+if (cnt > 0) {
+	// Send remaining updates
+	sendUpdate(batchingUpdatesToSend, uuid, processingUpdatesSysId);
+	batchingUpdatesToSend = {};
+	processingUpdatesSysId = [];
+}
+
+function sendUpdate(updates, id, records) {
+	var jsonUtil = new global.JSON();
+	for (var tenantId in updates) {
+		var counteract = {};
+		counteract.tenant_id = tenantId;
+		var payload = {};
+		payload['result'] = updates[tenantId];
+		var propUpdateResponse = messageSender.sendMessageToCounterACT('prop_update', payload, counteract);
+		gs.debug("response from sendMessageToCounterACT: " + jsonUtil.encode(propUpdateResponse));
+		var resultCount = 0;
+		for (var ctSysId in propUpdateResponse) {
+			gs.debug("ctSysId: " + ctSysId);
+			gs.debug("response status: " + propUpdateResponse[ctSysId]['resp_status']);
+			resultCount++;
+			if (propUpdateResponse[ctSysId]['resp_status'] == 201) {
+				/* prop update request successfully processed by CounterACT */
+				gs.debug("Prop update request for pending update [" + id + "] to CounterACT [" + tenantId + "] succeeded");
+			} else {
+				/* prop update request failed */
+				gs.warn("Prop update request for pending update [" + id + "] failed at CounterACT: [" + propUpdateResponse[ctSysId]['counteract'] + "]. Error reason: [" + propUpdateResponse[ctSysId]['errorCode'] + " - " + propUpdateResponse[ctSysId]['errorMsg'] + "].");
+			}
+		}
+		if (resultCount == 0) {
+			gs.warn("No response received for prop update [" + id + "] to CounterACT [" + tenantId + "]");
+		}
+	}
+	var currentTime = new GlideDateTime();
+	var i;
+	for (i = 0; i < records.length; i++) {
+		var sysId = records[i];
+		var processedRd = new GlideRecord('x_ftpp_now_plat_forescout_dynamic_properties_updates');
+		if (processedRd.get(sysId)) {
+			processedRd.active = "false";
+			processedRd.processed = currentTime;
+			processedRd.update();
+			gs.debug("Processed [" + sysId + "]");
+		} else {
+			gs.warn("dynamic property update record " + sysId + " doesn't exist anymore");
+		}
+	}
+	
+}]]></script>
+        <sys_class_name>sysauto_script</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-10-22 23:21:14</sys_created_on>
+        <sys_id>cefc8bb1dbdd230060cef00ebf9619cb</sys_id>
+        <sys_mod_count>23</sys_mod_count>
+        <sys_name>Update ForeScout Dynamic Properties</sys_name>
+        <sys_package display_value="ForeScout App for Asset Management" source="x_ftpp_now_plat">b45f12b8db19af4006629c27db961996</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ForeScout App for Asset Management">b45f12b8db19af4006629c27db961996</sys_scope>
+        <sys_update_name>sysauto_script_cefc8bb1dbdd230060cef00ebf9619cb</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2019-11-11 15:20:58</sys_updated_on>
+        <upgrade_safe>false</upgrade_safe>
+    </sysauto_script>
+</record_update>

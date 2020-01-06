@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_package_dependency_m2m">
+    <sys_package_dependency_m2m action="INSERT_OR_UPDATE">
+        <dependency display_value="System Import Sets" source="com.glide.system_import_set">52d29f35db312300d671440805961953</dependency>
+        <min_version>1.0.0</min_version>
+        <sys_created_by>system</sys_created_by>
+        <sys_created_on>2019-04-08 18:34:25</sys_created_on>
+        <sys_id>2bc6d3f71be0ff40756c65b82d4bcb55</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_package display_value="ForeScout App for Asset Management" source="x_ftpp_now_plat">b45f12b8db19af4006629c27db961996</sys_package>
+        <sys_updated_by>system</sys_updated_by>
+        <sys_updated_on>2019-04-08 18:34:25</sys_updated_on>
+    </sys_package_dependency_m2m>
+</record_update>

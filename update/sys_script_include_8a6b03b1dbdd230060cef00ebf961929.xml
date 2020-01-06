@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>public</access>
+        <active>true</active>
+        <api_name>x_ftpp_now_plat.FSSendMessageToCounterACT</api_name>
+        <caller_access/>
+        <client_callable>false</client_callable>
+        <description>This script include provides generic functions used to send a  message to CounterACT using one of the APIs supported by the ServiceNow module running on CounterACT</description>
+        <name>FSSendMessageToCounterACT</name>
+        <script><![CDATA[var FSSendMessageToCounterACT = Class.create();
+FSSendMessageToCounterACT.prototype = {
+    initialize: function() {
+		this.FSSnowAPIs = {};
+		this.FSSnowAPIs['service_incident']  = '/snow/service_incident';
+		this.FSSnowAPIs['security_incident'] = '/snow/security_incident';
+		this.FSSnowAPIs['action_request']    = '/snow/action';
+		this.FSSnowAPIs['actions_info']      = '/snow/actions_info';
+		this.FSSnowAPIs['prop_update']       = '/snow/prop_update';
+    },
+
+	/*
+	 * This is a generic function used to send a  message to CounterACT using one of the APIs
+	 * supported by the ServiceNow module running on CounterACT
+	 */
+	sendMessageToCounterACT: function(apiName, message, counterACTDetails) {
+		var retMessage = {};
+		/* validate message */
+		if (message == null) {
+			gs.addErrorMessage("'sendMessageToCounterACT' called with no message. Skipping.");
+			retMessage['error'] = "sendMessageToCounterACT called with no message. Skipping.";
+			return retMessage;
+		}
+
+		/* validate apiName */
+		if (!(apiName in this.FSSnowAPIs)) {
+			gs.addErrorMessage("Invalid API name: [" + apiName + "]. Can't send message to CounterACT.");
+			retMessage['error'] = "Invalid API name: [" + apiName + "]. Can't send message to ForeScout.";
+			return retMessage;
+		}
+
+		var counterACTRecord;
+
+		if (apiName != 'actions_info') {
+			/* get CounterACT config from 'ForeScout CounterACTs' table */
+			counterACTRecord = new GlideRecord("x_ftpp_now_plat_forescout_counteracts");
+			var count = new GlideAggregate("x_ftpp_now_plat_forescout_counteracts");
+			var tenantID     = counterACTDetails.tenant_id;
+			gs.debug("Tenant ID: [" + tenantID + "]");
+			if (tenantID == null || tenantID == '') {
+				count.addQuery('active', '=', 'true');
+				count.addAggregate('COUNT');
+				count.query();
+				if (count.next()) {
+					if (count.getAggregate('COUNT') > 1) {
+						gs.warn("Missing tenant id and there are multiple CounterACTs configured. Skip sending message to ForeScout.");
+						gs.addInfoMessage("Missing tenant id. Skip sending message to ForeScout");
+						retMessage['error'] = "Missing tenant id and there are multiple CounterACTs configured. Skip sending message to ForeScout.";
+						return retMessage;
+					} else if (count.getAggregate('COUNT') == 0) {
+						gs.warn("No active CounterACT configured. Skip sending message to ForeScout.");
+						gs.addInfoMessage("No active CounterACT configured. Skip sending message to ForeScout");
+						retMessage['error'] = "No active CounterACT configured. Skip sending message to ForeScout.";
+						return retMessage;
+					}
+				}
+				counterACTRecord.addQuery('active', true);
+				counterACTRecord.query();
+				counterACTRecord.next();
+			} else {
+				counterACTRecord.addQuery("tenant_id", tenantID);
+				counterACTRecord.addQuery('active', true);
+				counterACTRecord.query();
+				counterACTRecord.next();
+			}
+		} else {
+			counterACTRecord = counterACTDetails['ct_record'];
+		}
+
+		var isCounterACTFound = false;
+		while (counterACTRecord.isValidRecord()) {
+			var counterACT    = counterACTRecord.name.toString();
+			var retryCount    = 0;
+			var errorCode     = 0;
+			var errorMsg      = "";
+			var ctSysId       = counterACTRecord.sys_id;
+			isCounterACTFound = true;
+
+			/* store all response data in a hashmap */
+			retMessage[ctSysId] = {};
+			retMessage[ctSysId]['counteract'] = counterACT;
+
+			/* Use MID server if the CounterACT config contains one */
+			var midserver = counterACTRecord.mid_server.name.toString();
+
+			/* get auth token from CounterACT config based on 'apiName' */
+			var authToken;
+			switch (apiName) {
+				case 'service_incident':
+					authToken = counterACTRecord.inc_mgmt_auth_token.toString();
+					break;
+				case 'security_incident':
+					authToken = counterACTRecord.sec_ops_auth_token.toString();
+					break;
+				case 'action_request':
+				case 'actions_info':
+				case 'prop_update':
+					authToken = counterACTRecord.response_delegate_auth_token.toString();
+					break;
+				default:
+					/* control shouldn't reach here, since we've already validated 'apiName' above */
+			}
+			authToken = authToken.toString();
+			if (authToken == null || authToken.toString() == "") {
+				/* Auth token not found in 'ForeScout CounterACTs' table */
+				gs.addErrorMessage("No [" + apiName + "] Auth token found in 'ForeScout CounterACTs' table.");
+				gs.info("No [" + apiName + "] Auth token found in 'ForeScout CounterACTs' table.");
+				errorCode = 500;
+				errorMsg = "No [" + apiName + "] Auth token found in 'ForeScout CounterACTs' table for [" + counterACT + "] CounterACT.";
+
+			/* send response details to calling script */
+				retMessage[ctSysId]['resp_status'] = errorCode;
+				retMessage[ctSysId]['errorCode']   = errorCode;
+				retMessage[ctSysId]['errorMsg']    = errorMsg;
+				continue;
+			}
+			gs.debug("[" + apiName + "] Auth token: " + authToken);
+
+			while (retryCount <= 2) {
+				retryCount++;
+				try {
+					var request = new sn_ws.RESTMessageV2();
+					request.setHttpTimeout(30000);
+					var url     = "https://" + counterACT + this.FSSnowAPIs[apiName];
+					request.setEndpoint(url);
+					request.setHttpMethod("post");
+
+					if (midserver != null && midserver != "") {
+						gs.info("Sending message to URL: [" + url + "], using mid server: [" + midserver + "]");
+						request.setMIDServer(midserver);
+						request.setEccParameter('skip_sensor', true);
+					}
+
+					request.setRequestHeader("Authorization", authToken);
+					request.setRequestHeader("Content-Type", "application/json");
+
+					var jsonUtil = new global.JSON();
+					var body     = jsonUtil.encode(message);
+					gs.debug("ForeScout - encoded payload for [" + apiName + "] update: " + body);
+					request.setRequestBody(body);
+					request.setLogLevel('all');
+
+					var response = request.execute();
+					var ctResponse  = jsonUtil.decode(response.getBody());
+					var resp_status = response.getStatusCode();
+
+					/* record the HTTP response code */
+					retMessage[ctSysId]['resp_status'] = resp_status;
+
+					if (resp_status == 201) {
+						errorCode = 0;
+						retMessage[ctSysId]['msg'] = ctResponse['msg'];
+						if ('response_id' in ctResponse) {
+							retMessage[ctSysId]['response_id'] = ctResponse['response_id'];
+						}
+						break;
+					} else {
+						errorCode = resp_status;
+						errorMsg  = ctResponse['msg'];
+						gs.info("ForeScout - failed to send [" + apiName + "] message to [" + counterACT +"] CounterACT. Error: [" + errorCode + " - " + errorMsg + "]");
+
+						/* send response details to calling script */
+						retMessage[ctSysId]['errorCode'] = errorCode;
+						retMessage[ctSysId]['errorMsg']  = errorMsg;
+					}
+				} catch (ex) {
+					errorCode = 500;
+					errorMsg  = "Got exception while sending [" + apiName + "] message to [" + counterACT + "] CounterACT: " + ex.getMessage();
+					gs.info(errorMsg);
+
+					/* send response details to calling script */
+					retMessage[ctSysId]['resp_status'] = errorCode;
+					retMessage[ctSysId]['errorCode']   = errorCode;
+					retMessage[ctSysId]['errorMsg']    = errorMsg;
+				}
+			}
+			if (errorCode) {
+				gs.addErrorMessage("ForeScout - failed to send [" + apiName + "] message. Error: [" + errorCode + " - " + errorMsg + "]");
+			}
+			
+			/* move to next 'ForeScout CountetACTs' record */
+			counterACTRecord.next();
+		}
+
+		/* Log the case if no CounterACT config found. */
+		if (!isCounterACTFound) {
+			gs.info("No CounterACT configured/active in 'ForeScout CounterACTs' table");
+			return;
+		}
+
+		return retMessage;
+	},
+
+    type: 'FSSendMessageToCounterACT'
+};]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-10-22 23:14:22</sys_created_on>
+        <sys_id>8a6b03b1dbdd230060cef00ebf961929</sys_id>
+        <sys_mod_count>20</sys_mod_count>
+        <sys_name>FSSendMessageToCounterACT</sys_name>
+        <sys_package display_value="ForeScout App for Asset Management" source="x_ftpp_now_plat">b45f12b8db19af4006629c27db961996</sys_package>
+        <sys_policy>read</sys_policy>
+        <sys_scope display_value="ForeScout App for Asset Management">b45f12b8db19af4006629c27db961996</sys_scope>
+        <sys_update_name>sys_script_include_8a6b03b1dbdd230060cef00ebf961929</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2019-01-24 23:24:07</sys_updated_on>
+    </sys_script_include>
+</record_update>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?><database>
+    <element label="ForeScout CounterACTs" max_length="40" name="x_ftpp_now_plat_forescout_counteracts" type="collection">
+        <element attributes="edge_encryption_enabled=true" label="Active" max_length="40" name="active" type="boolean"/>
+        <element label="IT Incidents Authorization Token" max_length="40" name="inc_mgmt_auth_token" type="string"/>
+        <element attributes="edge_encryption_enabled=true" label="MID server" max_length="32" name="mid_server" reference="ecc_agent" type="reference"/>
+        <element display="true" label="IP address or FQDN" mandatory="true" max_length="100" name="name" type="string"/>
+        <element label="CMDB Authorization Token" max_length="40" name="response_delegate_auth_token" type="string"/>
+        <element label="SOC Incidents Authorization Token" max_length="40" name="sec_ops_auth_token" type="string"/>
+        <element label="Tenant ID" mandatory="true" max_length="40" name="tenant_id" type="string"/>
+        <index name="index">
+            <element name="mid_server"/>
+        </index>
+    </element>
+</database>

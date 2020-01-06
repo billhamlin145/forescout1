@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update>
+    <sys_documentation element="x_ftpp_now_plat_forescout_tenant_id" label="Tenant ID" language="en" table="x_ftpp_now_plat_forescout_import_table">
+        <sys_documentation action="INSERT_OR_UPDATE">
+            <element>x_ftpp_now_plat_forescout_tenant_id</element>
+            <help/>
+            <hint/>
+            <label>Tenant ID</label>
+            <language>en</language>
+            <name>x_ftpp_now_plat_forescout_import_table</name>
+            <plural>Tenant IDs</plural>
+            <sys_class_name>sys_documentation</sys_class_name>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2018-10-22 22:33:17</sys_created_on>
+            <sys_id>706203f9db9d230060cef00ebf9619de</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_name>Tenant ID</sys_name>
+            <sys_package display_value="ForeScout App for Asset Management" source="x_ftpp_now_plat">b45f12b8db19af4006629c27db961996</sys_package>
+            <sys_policy/>
+            <sys_scope display_value="ForeScout App for Asset Management">b45f12b8db19af4006629c27db961996</sys_scope>
+            <sys_update_name>sys_documentation_x_ftpp_now_plat_forescout_import_table_x_ftpp_now_plat_forescout_tenant_id_en</sys_update_name>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2018-10-22 22:33:17</sys_updated_on>
+            <url/>
+            <url_target/>
+        </sys_documentation>
+    </sys_documentation>
+</record_update>

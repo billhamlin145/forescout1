@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_package_dependency_m2m">
+    <sys_package_dependency_m2m action="INSERT_OR_UPDATE">
+        <dependency display_value="Global" source="global">global</dependency>
+        <min_version/>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2019-08-21 18:58:36</sys_created_on>
+        <sys_id>cafa26d7db5fbb00d6714408059619f0</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_package display_value="ForeScout App for Asset Management" source="x_ftpp_now_plat">b45f12b8db19af4006629c27db961996</sys_package>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2019-08-21 18:58:36</sys_updated_on>
+    </sys_package_dependency_m2m>
+</record_update>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?><database>
+    <element extends="sys_import_set_row" label="ForeScout Supported Actions Import Set" max_length="40" name="x_ftpp_now_plat_forescout_supported_actions_import_set" type="collection">
+        <element label="Description" max_length="1000" name="desc" type="string"/>
+        <element label="Label" mandatory="true" max_length="40" name="label" type="string"/>
+        <element label="Name" mandatory="true" max_length="40" name="name" type="string"/>
+    </element>
+</database>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?><database>
+    <element extends="sys_import_set_row" label="ForeScout Dynamic Properties Import Set" max_length="40" name="x_ftpp_now_plat_forescout_dynamic_properties_import_set" type="collection">
+        <element label="Column name" mandatory="true" max_length="100" name="column_name" type="string"/>
+        <element label="CounterACT tag" mandatory="true" max_length="100" name="counteract_tag" type="string"/>
+        <element label="ForeScout Tenant ID" mandatory="true" max_length="100" name="forescout_tenant_id" type="string"/>
+        <element label="Label" max_length="200" name="label" type="string"/>
+        <element label="Property type" mandatory="true" max_length="100" name="property_type" type="string"/>
+        <element label="Subfield names" max_length="1000" name="subfield_names" type="string"/>
+        <element attributes="edge_encryption_enabled=true" label="Table" mandatory="true" max_length="32" name="table" reference="sys_db_object" type="reference"/>
+        <index name="index">
+            <element name="table"/>
+        </index>
+    </element>
+</database>

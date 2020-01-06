@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sysevent_register">
+    <sysevent_register action="INSERT_OR_UPDATE">
+        <caller_access/>
+        <description>Request ForeScout CounterACT to take action: Add to Group</description>
+        <event_name>x_ftpp_now_plat.add-to-group</event_name>
+        <fired_by/>
+        <queue/>
+        <suffix>add-to-group</suffix>
+        <sys_class_name>sysevent_register</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-10-22 23:26:44</sys_created_on>
+        <sys_id>d38e8375dbdd230060cef00ebf961973</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>x_ftpp_now_plat.add-to-group</sys_name>
+        <sys_package display_value="ForeScout App for Asset Management" source="x_ftpp_now_plat">b45f12b8db19af4006629c27db961996</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ForeScout App for Asset Management">b45f12b8db19af4006629c27db961996</sys_scope>
+        <sys_update_name>sysevent_register_d38e8375dbdd230060cef00ebf961973</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2018-10-22 23:26:44</sys_updated_on>
+        <table/>
+    </sysevent_register>
+</record_update>

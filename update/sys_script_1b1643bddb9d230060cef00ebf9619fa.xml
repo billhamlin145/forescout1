@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update sys_domain="global" table="sys_script">
+    <sys_script action="INSERT_OR_UPDATE">
+        <abort_action>false</abort_action>
+        <access>package_private</access>
+        <action_delete>false</action_delete>
+        <action_insert>true</action_insert>
+        <action_query>false</action_query>
+        <action_update>true</action_update>
+        <active>true</active>
+        <add_message>false</add_message>
+        <advanced>true</advanced>
+        <change_fields>false</change_fields>
+        <client_callable>false</client_callable>
+        <collection>x_ftpp_now_plat_forescout_counteracts</collection>
+        <condition/>
+        <description/>
+        <execute_function>false</execute_function>
+        <filter_condition table="x_ftpp_now_plat_forescout_counteracts">nameVALCHANGES^ORmid_serverVALCHANGES^ORcmdb_authorization_tokenVALCHANGES^ORactiveCHANGESTOtrue^EQ<item endquery="false" field="name" goto="false" newquery="false" operator="VALCHANGES" or="false" value=""/>
+            <item endquery="false" field="mid_server" goto="false" newquery="false" operator="VALCHANGES" or="true" value=""/>
+            <item endquery="false" field="active" goto="false" newquery="false" operator="CHANGESTO" or="true" value="true"/>
+            <item endquery="true" field="" goto="false" newquery="false" operator="=" or="false" value=""/>
+        </filter_condition>
+        <is_rest>false</is_rest>
+        <message/>
+        <name>Get ForeScout Supported Actions</name>
+        <order>100</order>
+        <priority>100</priority>
+        <rest_method/>
+        <rest_method_text/>
+        <rest_service/>
+        <rest_service_text/>
+        <rest_variables/>
+        <role_conditions/>
+        <script><![CDATA[(function executeRule(current, previous) {
+	/*
+	 * Generate UUID in javascript. There are other libraries available to generate
+	 * UUID in javascript, but all browsers may not support those libraries.
+	 */
+	var dt = new Date().getTime();
+    var actionsInfoRequestID = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        var r = (dt + Math.random()*16)%16 | 0;
+        dt = Math.floor(dt/16);
+        return (c=='x' ? r :(r&0x3|0x8)).toString(16);
+    });
+
+	/* store details about actions info request in an object */
+	var actionsInfoRequest           = {};
+	actionsInfoRequest['request_id'] = actionsInfoRequestID;
+
+	/* store details about CounterACT in an object */
+	var counterACTDetails          = {};
+	counterACTDetails['ct_record'] = current;
+
+	/* send actions_info request to CounterACT */
+	var messageSender       = new x_ftpp_now_plat.FSSendMessageToCounterACT();
+	var actionsInfoResponse = messageSender.sendMessageToCounterACT('actions_info', actionsInfoRequest, counterACTDetails);
+	var resultCount         = 0;
+
+	for (var ctSysId in actionsInfoResponse) {
+		resultCount++;
+		var actionsInfo           = actionsInfoResponse[ctSysId]['msg'];
+		var actionsInfoResponseID = actionsInfoResponse[ctSysId]['response_id'];
+
+		if (actionsInfoResponseID != actionsInfoRequestID) {
+			/* request IDs don't match in request and response. Discard reply. */
+			gs.warn("Actions Info response from CounterACT: [" + actionsInfoResponse[ctSysId]['counteract'] + "], contains wrong ID. Actions Info call failed.");
+			continue;
+		}
+
+		if (actionsInfoResponse[ctSysId]['resp_status'] != 201) {
+			/* http response code indicates failure */
+			gs.warn("Actions info request failed at CounterACT: [" + actionsInfoResponse[ctSysId]['counteract'] + "]. Error reason: [" + actionsInfoResponse[ctSysId]['errorCode'] + " - " + actionsInfoResponse[ctSysId]['errorMsg'] + "]");
+			continue;
+		} else {
+			gs.info("Actions info request succeeded at CounterACT: [" + actionsInfoResponse[ctSysId]['counteract'] + "].");
+		}
+
+		/* parse the data received for each action from CounterACT and populate it in the 'ForeScout Supported Actions Import Set' */
+		for (var actionName in actionsInfo) {
+			var supportedActionsRecord = new GlideRecord('x_ftpp_now_plat_forescout_supported_actions_import_set');
+			supportedActionsRecord.initialize();
+			supportedActionsRecord['name'] = actionName;
+			var actionInfo = actionsInfo[actionName];
+			for (var actionDetail in actionInfo) {
+				supportedActionsRecord[actionDetail] = actionInfo[actionDetail];
+			}
+			supportedActionsRecord.update("Actions Info call succeeded from CounterACT: [" + actionsInfoResponse[ctSysId]['counteract'] + "].");
+		}
+	}
+
+	if (resultCount == 0) {
+		gs.info("No response received for Actions Info request");
+	}
+})(current, previous);]]></script>
+        <sys_class_name>sys_script</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-10-22 22:51:03</sys_created_on>
+        <sys_domain>global</sys_domain>
+        <sys_domain_path>/</sys_domain_path>
+        <sys_id>1b1643bddb9d230060cef00ebf9619fa</sys_id>
+        <sys_mod_count>2</sys_mod_count>
+        <sys_name>Get ForeScout Supported Actions</sys_name>
+        <sys_overrides/>
+        <sys_package display_value="ForeScout App for Asset Management" source="x_ftpp_now_plat">b45f12b8db19af4006629c27db961996</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ForeScout App for Asset Management">b45f12b8db19af4006629c27db961996</sys_scope>
+        <sys_update_name>sys_script_1b1643bddb9d230060cef00ebf9619fa</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2018-10-22 23:01:52</sys_updated_on>
+        <template/>
+        <when>async</when>
+    </sys_script>
+    <sys_translated_text action="delete_multiple" query="documentkey=1b1643bddb9d230060cef00ebf9619fa"/>
+</record_update>

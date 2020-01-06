@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ws_operation">
+    <sys_ws_operation action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <consumes>application/json,application/xml,text/xml</consumes>
+        <consumes_customized>false</consumes_customized>
+        <default_operation_uri>/api/x_ftpp_now_plat/table/{tableName}</default_operation_uri>
+        <enforce_acl>a108ba42db99630060cef00ebf9619b0</enforce_acl>
+        <http_method>GET</http_method>
+        <name>Get</name>
+        <operation_script><![CDATA[(function process(/*RESTAPIRequest*/ request, /*RESTAPIResponse*/ response) {
+	var tableName = request.pathParams.tableName;
+	var queryParam = request.queryParams.sysparm_query || '';
+	var limitParam = request.queryParams.sysparm_limit || 10000;
+	var fieldsParam = request.queryParams.sysparm_fields || '';
+	var displayParam = request.queryParams.sysparm_display_value || 'false';
+	
+	if (tableName != 'sys_db_object' && tableName != 'sys_documentation' && tableName != 'sys_dictionary') {
+		response.setError(new sn_ws_err.BadRequestError('Table not supported'));
+		return;
+	}
+	
+	var tableRd = new GlideRecord(tableName);
+	if (queryParam.toString().length > 0) {
+		tableRd.addQuery(queryParam.toString());
+	}
+	var fields = [];
+	if (fieldsParam.toString().length > 0) {
+		fields = fieldsParam.toString().split(',');
+	} else {
+		response.setError(new sn_ws_err.BadRequestError('Missing required parameter - sysparm_fields'));
+		return;
+	}
+	tableRd.query();
+	var cnt = 0;
+	response.setContentType('application/json');
+	var results = [];
+	while (tableRd.next()) {
+		if (cnt < limitParam) {
+			if (fields.length > 0) {
+				var record = {};
+				var i;
+				for (i=0; i<fields.length; i++) {
+					if (displayParam.toString() == 'true') {
+						record[fields[i]] = tableRd.getDisplayValue(fields[i]) === null ? "" : tableRd.getDisplayValue(fields[i]);
+					} else {
+						record[fields[i]] = tableRd.getValue(fields[i]) === null ? "" : tableRd.getValue(fields[i]);
+					}
+				}
+				results.push(record);
+			}
+		} else {
+			break;
+		}
+		cnt++;
+	}
+	if (cnt == 0) {
+		response.setError(new sn_ws_err.NotFoundError('No record found'));
+		return;
+	}
+	response.setStatus(200);
+	response.setBody(results);
+})(request, response);]]></operation_script>
+        <operation_uri>/api/x_ftpp_now_plat/v1/table/{tableName}</operation_uri>
+        <produces>application/json,application/xml,text/xml</produces>
+        <produces_customized>false</produces_customized>
+        <relative_path>/{tableName}</relative_path>
+        <request_example/>
+        <requires_acl_authorization>true</requires_acl_authorization>
+        <requires_authentication>true</requires_authentication>
+        <requires_snc_internal_role>false</requires_snc_internal_role>
+        <short_description/>
+        <sys_class_name>sys_ws_operation</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-10-23 18:38:40</sys_created_on>
+        <sys_id>9bd517c6dbd9630060cef00ebf9619af</sys_id>
+        <sys_mod_count>2</sys_mod_count>
+        <sys_name>Get</sys_name>
+        <sys_package display_value="ForeScout App for Asset Management" source="x_ftpp_now_plat">b45f12b8db19af4006629c27db961996</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ForeScout App for Asset Management">b45f12b8db19af4006629c27db961996</sys_scope>
+        <sys_update_name>sys_ws_operation_9bd517c6dbd9630060cef00ebf9619af</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2018-10-23 18:40:16</sys_updated_on>
+        <web_service_definition display_value="System Table">dc2a3282db99630060cef00ebf96190d</web_service_definition>
+        <web_service_version display_value="v1">9e5a7ac2db99630060cef00ebf961952</web_service_version>
+    </sys_ws_operation>
+</record_update>

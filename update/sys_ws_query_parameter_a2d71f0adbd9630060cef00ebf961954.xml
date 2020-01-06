@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ws_query_parameter">
+    <sys_ws_query_parameter action="INSERT_OR_UPDATE">
+        <example_value>true</example_value>
+        <name>sysparm_display_value</name>
+        <required>false</required>
+        <short_description>Retrieve the display value and/or the actual value from the database.</short_description>
+        <sys_class_name>sys_ws_query_parameter</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-10-23 18:46:01</sys_created_on>
+        <sys_id>a2d71f0adbd9630060cef00ebf961954</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>sysparm_display_value</sys_name>
+        <sys_package display_value="ForeScout App for Asset Management" source="x_ftpp_now_plat">b45f12b8db19af4006629c27db961996</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ForeScout App for Asset Management">b45f12b8db19af4006629c27db961996</sys_scope>
+        <sys_update_name>sys_ws_query_parameter_a2d71f0adbd9630060cef00ebf961954</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2018-10-23 18:46:01</sys_updated_on>
+        <web_service_definition display_value="System Table">dc2a3282db99630060cef00ebf96190d</web_service_definition>
+    </sys_ws_query_parameter>
+</record_update>

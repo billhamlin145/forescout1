@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update>
+    <sys_documentation element="property_type" label="Property type" language="en" table="x_ftpp_now_plat_forescout_dynamic_properties_import_set">
+        <sys_documentation action="INSERT_OR_UPDATE">
+            <element>property_type</element>
+            <help/>
+            <hint/>
+            <label>Property type</label>
+            <language>en</language>
+            <name>x_ftpp_now_plat_forescout_dynamic_properties_import_set</name>
+            <plural>Property types</plural>
+            <sys_class_name>sys_documentation</sys_class_name>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2018-10-19 22:40:26</sys_created_on>
+            <sys_id>4847a3f0db5daf4006629c27db961973</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_name>Property type</sys_name>
+            <sys_package display_value="ForeScout App for Asset Management" source="x_ftpp_now_plat">b45f12b8db19af4006629c27db961996</sys_package>
+            <sys_policy/>
+            <sys_scope display_value="ForeScout App for Asset Management">b45f12b8db19af4006629c27db961996</sys_scope>
+            <sys_update_name>sys_documentation_x_ftpp_now_plat_forescout_dynamic_properties_import_set_property_type_en</sys_update_name>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2018-10-19 22:40:26</sys_updated_on>
+            <url/>
+            <url_target/>
+        </sys_documentation>
+    </sys_documentation>
+</record_update>

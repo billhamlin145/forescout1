@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update>
+    <sys_documentation element="install_date" label="Lifecycle Start Date" language="en" table="u_cmdb_ci_nac">
+        <sys_documentation action="INSERT_OR_UPDATE">
+            <element>install_date</element>
+            <help/>
+            <hint/>
+            <label>Lifecycle Start Date</label>
+            <language>en</language>
+            <name>u_cmdb_ci_nac</name>
+            <plural>Lifecycle Start Dates</plural>
+            <sys_class_name>sys_documentation</sys_class_name>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2019-08-21 18:58:11</sys_created_on>
+            <sys_id>44eaae97db5fbb00d6714408059619f4</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_name>Lifecycle Start Date</sys_name>
+            <sys_package display_value="ForeScout App for Asset Management" source="x_ftpp_now_plat">b45f12b8db19af4006629c27db961996</sys_package>
+            <sys_policy/>
+            <sys_scope display_value="ForeScout App for Asset Management">b45f12b8db19af4006629c27db961996</sys_scope>
+            <sys_update_name>sys_documentation_u_cmdb_ci_nac_install_date_en</sys_update_name>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2019-08-21 18:58:11</sys_updated_on>
+            <url/>
+            <url_target/>
+        </sys_documentation>
+    </sys_documentation>
+</record_update>

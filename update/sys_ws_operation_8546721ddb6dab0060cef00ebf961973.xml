@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ws_operation">
+    <sys_ws_operation action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <consumes>application/json,application/xml,text/xml</consumes>
+        <consumes_customized>false</consumes_customized>
+        <default_operation_uri>/api/x_ftpp_now_plat/dynamic_properties</default_operation_uri>
+        <enforce_acl>8085f6d9db6dab0060cef00ebf961965</enforce_acl>
+        <http_method>POST</http_method>
+        <name>Get Properties</name>
+        <operation_script><![CDATA[(function process(/*RESTAPIRequest*/ request, /*RESTAPIResponse*/ response) {
+
+    // implement resource here
+	gs.debug("CounterACT is trying to get properties");
+	var jsonUtil = new global.JSON();
+	var propertyRequests = jsonUtil.decode(request.body.dataString);
+	var responseMultiple = [];
+	var i;
+	gs.debug("length: " + propertyRequests.length);
+	for (i = 0; i < propertyRequests.length; i++) {
+		var propertyRequest = propertyRequests[i];
+		gs.debug("processing request: " + jsonUtil.encode(propertyRequest));
+		var mac = propertyRequest.mac;
+		var tenant_id = propertyRequest.tenant_id;
+		var properties = propertyRequest.properties;
+		var table = propertyRequest.table;
+		var inherit = propertyRequest.inherit;
+		var record = new GlideRecordSecure(table);
+		if (inherit == 'cmdb_ci') {
+			var ciqc1 = record.addQuery('mac_address', 'CONTAINS', mac);
+			//var ciqc2 = record.addQuery('x_ftpp_now_plat_forescout_tenant_id', tenant_id);
+			//ciqc2.addOrCondition('x_ftpp_now_plat_forescout_tenant_id', '');
+		} else if (inherit == 'task') {
+			var cmdb_record = new GlideRecordSecure('cmdb_ci');
+			var taskqc1 = cmdb_record.addQuery('mac_address', 'CONTAINS', mac);
+			var taskqc2 = cmdb_record.addQuery('x_ftpp_now_plat_forescout_tenant_id', tenant_id);
+			taskqc2.addOrCondition('x_ftpp_now_plat_forescout_tenant_id', '');
+			cmdb_record.orderBy('sys_updated_on');
+			cmdb_record.query();
+			if (!cmdb_record.next()) {
+				gs.debug("No record is associated with configuration item mac [" + mac + "] and tenant id [" + tenant_id + "]" );
+				continue;
+			}
+			if (cmdb_record.x_ftpp_now_plat_forescout_tenant_id == null || cmdb_record.x_ftpp_now_plat_forescout_tenant_id == '') {
+				cmdb_record.x_ftpp_now_plat_forescout_tenant_id = tenant_id;
+				cmdb_record.update();
+			}
+			var sys_id = cmdb_record.sys_id.toString();
+			record.addQuery('cmdb_ci', sys_id);
+		}
+		record.orderBy('sys_updated_on');
+		record.query();
+		if (!record.next()) {
+			gs.debug("No record found for mac [" + mac + "] and tenant id [" + tenant_id + "]");
+			continue;
+		}
+		gs.debug("Found record in table [" + table + "] sys_id is [" + record.sys_id + "]");
+		//if (inherit == 'cmdb_ci' && (record.x_ftpp_now_plat_forescout_tenant_id == null || record.x_ftpp_now_plat_forescout_tenant_id == '')) {
+		//	record.x_ftpp_now_plat_forescout_tenant_id = tenant_id;
+		//	record.update();
+		//}
+		var responseSingle = {};
+		var responseProperties = [];
+		var j;
+		for (j = 0; j < properties.length; j++) {
+			var propertySingle = properties[j];
+			var propertyResponse = {};
+			propertyResponse.counteract_tag = propertySingle.counteract_tag;
+			propertyResponse.property_type = propertySingle.type;
+			if (propertySingle.type == 'composite') {
+				var columnElement = record.getElement(propertySingle.name);
+				var columnReference = columnElement.getRefRecord();
+				var fields = propertySingle.fields.split(',');
+				var k;
+				var propertyValue = {};
+				for (k = 0; k < fields.length; k++) {
+					propertyValue[fields[k]] = columnReference.getValue(fields[k]) != null ? columnReference.getValue(fields[k]) : "";
+				}
+				propertyResponse.property_value = propertyValue;
+			} else {
+				gs.debug("fetching the value for prop: " + propertySingle.name);
+				gs.debug("fetch gets: " + record.getValue(propertySingle.name));
+				propertyResponse.property_value = record.getValue(propertySingle.name) != null ? record.getValue(propertySingle.name) : "";
+			}
+			responseProperties.push(propertyResponse);
+		}
+		responseSingle.mac = mac;
+		responseSingle.result = responseProperties;
+		responseMultiple.push(responseSingle);
+	}
+	response.setStatus(201);
+	gs.debug("response body: " + jsonUtil.encode(responseMultiple));
+	response.setBody(responseMultiple);
+})(request, response);]]></operation_script>
+        <operation_uri>/api/x_ftpp_now_plat/v1/dynamic_properties</operation_uri>
+        <produces>application/json,application/xml,text/xml</produces>
+        <produces_customized>false</produces_customized>
+        <relative_path>/</relative_path>
+        <request_example/>
+        <requires_acl_authorization>true</requires_acl_authorization>
+        <requires_authentication>true</requires_authentication>
+        <requires_snc_internal_role>false</requires_snc_internal_role>
+        <short_description/>
+        <sys_class_name>sys_ws_operation</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-11-02 18:40:22</sys_created_on>
+        <sys_id>8546721ddb6dab0060cef00ebf961973</sys_id>
+        <sys_mod_count>21</sys_mod_count>
+        <sys_name>Get Properties</sys_name>
+        <sys_package display_value="ForeScout App for Asset Management" source="x_ftpp_now_plat">b45f12b8db19af4006629c27db961996</sys_package>
+        <sys_policy>protected</sys_policy>
+        <sys_scope display_value="ForeScout App for Asset Management">b45f12b8db19af4006629c27db961996</sys_scope>
+        <sys_update_name>sys_ws_operation_8546721ddb6dab0060cef00ebf961973</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2019-08-06 18:57:13</sys_updated_on>
+        <web_service_definition display_value="Dynamic Properties">2ddf26d5db6dab0060cef00ebf96193e</web_service_definition>
+        <web_service_version display_value="v1">5555f6d5db6dab0060cef00ebf9619ca</web_service_version>
+    </sys_ws_operation>
+</record_update>

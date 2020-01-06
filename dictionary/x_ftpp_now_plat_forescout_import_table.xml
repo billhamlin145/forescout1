@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?><database>
+    <element extends="sys_import_set_row" label="ForeScout CI Staging Table" max_length="40" name="x_ftpp_now_plat_forescout_import_table" type="collection">
+        <element attributes="edge_encryption_enabled=true" label="Account is Disabled" max_length="40" name="account_is_disabled" type="boolean"/>
+        <element attributes="edge_encryption_enabled=true" label="Account is Expired" max_length="40" name="account_is_expired" type="boolean"/>
+        <element label="Function" max_length="100" name="classification" type="string"/>
+        <element label="Classification Method" max_length="40" name="classification_method" type="string"/>
+        <element label="Company" max_length="40" name="company" type="string"/>
+        <element label="Compliance Status" max_length="40" name="compliance_status" type="string"/>
+        <element label="Department" max_length="40" name="department" type="string"/>
+        <element label="Device Interfaces" max_length="40" name="device_interfaces" type="string"/>
+        <element label="DHCP Server Address" max_length="40" name="dhcpserveraddress" type="string"/>
+        <element label="DHCP device class" max_length="40" name="dhcp_device_class" type="string"/>
+        <element label="DHCP device OS" max_length="40" name="dhcp_device_os" type="string"/>
+        <element label="DHCP Domain Name" max_length="40" name="dhcp_domain_name" type="string"/>
+        <element label="DHCP Hostname" max_length="40" name="dhcp_hostname" type="string"/>
+        <element label="DHCP options fingerprint" max_length="100" name="dhcp_options_fingerprint" type="string"/>
+        <element label="DHCP request fingerprint" max_length="100" name="dhcp_request_fingerprint" type="string"/>
+        <element label="DHCP Vendor Class" max_length="40" name="dhcp_vendor_class" type="string"/>
+        <element label="Display Name" max_length="40" name="display_name" type="string"/>
+        <element label="Distinguished Name" max_length="40" name="distinguished_name" type="string"/>
+        <element label="DNS Name" max_length="100" name="dnsname" type="string"/>
+        <element label="Email" max_length="40" name="email" type="string"/>
+        <element label="Employee Number" max_length="40" name="employee_number" type="string"/>
+        <element label="External Devices" max_length="500" name="external_devices" type="string"/>
+        <element label="Guest Account Approve Date" max_length="40" name="guest_account_approve_date" type="string"/>
+        <element label="Guest Approved By" max_length="40" name="guest_approved_by" type="string"/>
+        <element label="Guest Comment" max_length="100" name="guest_comment" type="string"/>
+        <element label="Guest Company" max_length="40" name="guest_company" type="string"/>
+        <element label="Guest Contact Person" max_length="40" name="guest_contact_person" type="string"/>
+        <element label="Guest Contact Person Email" max_length="40" name="guest_contact_person_email" type="string"/>
+        <element label="Guest Custom1 form field" max_length="100" name="guest_custom1_form_field" type="string"/>
+        <element label="Guest Custom2 form field" max_length="100" name="guest_custom2_form_field" type="string"/>
+        <element label="Guest Custom3 form field" max_length="100" name="guest_custom3_form_field" type="string"/>
+        <element label="Guest Custom5 form field" max_length="100" name="guest_custom5_form_field" type="string"/>
+        <element label="Guest Email Address" max_length="40" name="guest_email_address" type="string"/>
+        <element label="Guest Full Name" max_length="40" name="guest_full_name" type="string"/>
+        <element label="Guest Location" max_length="40" name="guest_location" type="string"/>
+        <element label="Guest Phone Number" max_length="40" name="guest_phone_number" type="string"/>
+        <element label="Guest Registration browser user agent" max_length="100" name="guest_registration_browser_user_agent" type="string"/>
+        <element label="Guest Registration Date" max_length="40" name="guest_registration_date" type="string"/>
+        <element label="Guest Registration Status" max_length="40" name="guest_registration_status" type="string"/>
+        <element label="Guest Tags" max_length="40" name="guest_tags" type="string"/>
+        <element label="Guest Title" max_length="40" name="guest_title" type="string"/>
+        <element label="Guest User Name" max_length="40" name="guest_user_name" type="string"/>
+        <element label="Guest Custom4 form field" max_length="100" name="g_guest_custom4_form_field" type="string"/>
+        <element label="NetBIOS Hostname" max_length="40" name="hostname" type="string"/>
+        <element attributes="edge_encryption_enabled=true" default="true" label="Host is Online" max_length="40" name="hostonline" type="boolean"/>
+        <element label="Hotfix Installed" max_length="100" name="hotfix_installed" type="string"/>
+        <element label="HTTP User Agent" max_length="300" name="httpuseragent" type="string"/>
+        <element label="HTTP Login User" max_length="40" name="http_login_user" type="string"/>
+        <element label="Initials" max_length="40" name="initials" type="string"/>
+        <element label="Interface Table" max_length="200" name="interface_table" type="string"/>
+        <element label="Intranet WSUS Server" max_length="40" name="intranet_wsus_server" type="string"/>
+        <element label="IP Address" max_length="40" name="ip" type="string"/>
+        <element label="IPv6 Address" max_length="100" name="ipv6_address" type="string"/>
+        <element label="IPv6 Link-Local Address" max_length="100" name="ipv6_link_local_address" type="string"/>
+        <element label="Last Name" max_length="40" name="last_name" type="string"/>
+        <element label="LDAP User Name" max_length="40" name="ldap_user_name" type="string"/>
+        <element label="Linux Expected Script Result" max_length="100" name="linux_expected_script_result" type="string"/>
+        <element label="Linux File Date" max_length="40" name="linux_file_date" type="string"/>
+        <element label="Linux File Exists" max_length="40" name="linux_file_exists" type="string"/>
+        <element label="Linux File Size" max_length="40" name="linux_file_size" type="string"/>
+        <element label="Linux Hostname" max_length="40" name="linux_hostname" type="string"/>
+        <element attributes="edge_encryption_enabled=true" label="Linux Manageable - SecureConnector" max_length="40" name="linux_manageable_secureconnector" type="boolean"/>
+        <element attributes="edge_encryption_enabled=true" label="Linux Manageable - SSH Direct Access" max_length="40" name="linux_manageable_sshdirectaccess" type="boolean"/>
+        <element label="Linux Processes Running" max_length="200" name="linux_processes_running" type="string"/>
+        <element label="Linux User" max_length="40" name="linux_user" type="string"/>
+        <element label="Linux Version" max_length="40" name="linux_version" type="string"/>
+        <element label="MAC Address" mandatory="true" max_length="40" name="mac" type="string"/>
+        <element label="Member Of" max_length="40" name="member_of" type="string"/>
+        <element label="Microsoft Applications Installed" max_length="500" name="microsoft_applications_installed" type="string"/>
+        <element label="Microsoft Vulnerabilities" max_length="100" name="microsoft_vulnerabilities" type="string"/>
+        <element label="Microsoft Vulnerabilities Fine-tuned" max_length="200" name="microsoft_vulnerabilities_fine_tuned" type="string"/>
+        <element label="Mobile Phone" max_length="40" name="mobile_phone" type="string"/>
+        <element label="NetBIOS Domain" max_length="100" name="netbiosdomain" type="string"/>
+        <element label="NetBIOS Membership Type" max_length="40" name="netbios_membership_type" type="string"/>
+        <element label="Network Function" max_length="40" name="netfunc" type="string"/>
+        <element label="Network Adapters" max_length="200" name="network_adapters" type="string"/>
+        <element label="NIC Vendor" max_length="40" name="nicvendor" type="string"/>
+        <element label="NIC Vendor Value" max_length="40" name="nic_vendor_value" type="string"/>
+        <element attributes="edge_encryption_enabled=true" label="Number of Hosts on Port" max_length="40" name="number_of_hosts_on_port" type="integer"/>
+        <element attributes="edge_encryption_enabled=true" label="Number of IP Addresses" max_length="40" name="number_of_ip_addresses" type="integer"/>
+        <element label="Open Ports" max_length="255" name="open_ports" type="string"/>
+        <element label="OS Fingerprint" max_length="200" name="osfingerprint" type="string"/>
+        <element label="Password Last Set" max_length="40" name="password_last_set" type="string"/>
+        <element label="Phone" max_length="40" name="phone" type="string"/>
+        <element label="Running Config" max_length="40" name="running_config" type="string"/>
+        <element label="Running Config Time" max_length="40" name="running_config_time" type="string"/>
+        <element label="SecureConnector Deployment Type" max_length="40" name="secureconnector_deployment_type" type="string"/>
+        <element label="SecureConnector Systray Display" max_length="40" name="secureconnector_systray_display" type="string"/>
+        <element label="SecureConnector Version" max_length="40" name="secureconnector_version" type="string"/>
+        <element label="Service Banner" max_length="40" name="service_banner" type="string"/>
+        <element label="Signed In Status" max_length="40" name="signed_in_status" type="string"/>
+        <element label="SNMP-MIB-II ifNumber" max_length="200" name="snmp_mib_ii_ifnumber" type="string"/>
+        <element label="SNMP-MIB-II sysDescription" max_length="100" name="snmp_mib_ii_sysdescription" type="string"/>
+        <element label="SNMP-MIB-II sysLocation" max_length="40" name="snmp_mib_ii_syslocation" type="string"/>
+        <element label="SNMP-MIB-II sysName" max_length="40" name="snmp_mib_ii_sysname" type="string"/>
+        <element label="SNMP-MIB-II sysUpTime" max_length="40" name="snmp_mib_ii_sysuptime" type="string"/>
+        <element label="SNMP-OID" max_length="100" name="snmp_oid" type="string"/>
+        <element label="Street Address" max_length="100" name="street_address" type="string"/>
+        <element label="Switch Hostname" max_length="40" name="switch_hostname" type="string"/>
+        <element label="Switch IP" max_length="40" name="switch_ip" type="string"/>
+        <element label="Switch IP and Port Name" max_length="40" name="switch_ip_and_port_name" type="string"/>
+        <element label="Switch Location" max_length="40" name="switch_location" type="string"/>
+        <element label="Switch Port Action" max_length="40" name="switch_port_action" type="string"/>
+        <element label="Switch Port Alias" max_length="40" name="switch_port_alias" type="string"/>
+        <element label="Switch Port Configurations" max_length="40" name="switch_port_configurations" type="string"/>
+        <element label="Switch Port Connect" max_length="40" name="switch_port_connect" type="string"/>
+        <element label="Switch Port Name" max_length="100" name="switch_port_name" type="string"/>
+        <element label="Switch Port PoE Connected Device" max_length="40" name="switch_port_poe_connected_device" type="string"/>
+        <element attributes="edge_encryption_enabled=true" label="Switch Port PoE Power Consumption" max_length="40" name="switch_port_poe_power_consumption" type="integer"/>
+        <element label="Switch Port VLAN" max_length="40" name="switch_port_vlan" type="string"/>
+        <element label="Switch Port Vlan Group" max_length="40" name="switch_port_vlan_group" type="string"/>
+        <element label="Switch Port VLAN Name" max_length="255" name="switch_port_vlan_name" type="string"/>
+        <element attributes="edge_encryption_enabled=true" label="Switch Port Voice Device" max_length="40" name="switch_port_voice_device" type="boolean"/>
+        <element attributes="edge_encryption_enabled=true" label="Switch Port Voice VLAN" max_length="40" name="switch_port_voice_vlan" type="integer"/>
+        <element label="Switch Vendor" max_length="40" name="switch_vendor" type="string"/>
+        <element attributes="edge_encryption_enabled=true" label="Switch Virtual Interface" max_length="40" name="switch_virtual_interface" type="boolean"/>
+        <element attributes="edge_encryption_enabled=true" label="Switch VoIP Port" max_length="40" name="switch_voip_port" type="boolean"/>
+        <element label="System Description" max_length="255" name="system_description" type="string_full_utf8"/>
+        <element label="Title" max_length="40" name="title" type="string"/>
+        <element label="Trap Received" max_length="255" name="trap_received" type="string_full_utf8"/>
+        <element label="User" max_length="40" name="user" type="string"/>
+        <element label="User given Name" max_length="40" name="user_given_name" type="string"/>
+        <element label="Virtual Machine Guest Health" max_length="100" name="virtual_machine_guest_health" type="string"/>
+        <element label="Virtual Machine Hardware" max_length="1000" name="virtual_machine_hardware" type="string"/>
+        <element label="Virtual Machine Power State" max_length="100" name="virtual_machine_power_state" type="string"/>
+        <element label="Windows Anti-Spyware Installed" max_length="500" name="windows_antispyware_installed" type="string"/>
+        <element label="Windows Antivirus Installed" max_length="500" name="windows_antivirus_installed" type="string"/>
+        <element label="Windows Antivirus Running" max_length="500" name="windows_antivirus_running" type="string"/>
+        <element label="Windows Antivirus Update Date" max_length="40" name="windows_antivirus_update_date" type="string"/>
+        <element label="Windows Applications Installed" max_length="1000" name="windows_applications_installed" type="string"/>
+        <element label="Windows Cloud Storage Installed" max_length="100" name="windows_cloud_storage_installed" type="string"/>
+        <element label="Windows Cloud Storage Running" max_length="100" name="windows_cloud_storage_running" type="string"/>
+        <element label="Windows File Date" max_length="40" name="windows_file_date" type="string"/>
+        <element label="Windows File Exists" max_length="40" name="windows_file_exists" type="string"/>
+        <element label="Windows File MD5 Signature" max_length="100" name="windows_file_md5_signature" type="string"/>
+        <element label="Windows File Size" max_length="40" name="windows_file_size" type="string"/>
+        <element label="Windows File Version" max_length="40" name="windows_file_version" type="string"/>
+        <element label="Windows Hard Drive Encryption Installed" max_length="100" name="windows_hard_drive_encryption_installed" type="string"/>
+        <element label="Windows Hard Drive Encryption State" max_length="200" name="windows_hard_drive_encryption_state" type="string"/>
+        <element label="Windows Instant Messaging Installed" max_length="100" name="windows_instant_messaging_installed" type="string"/>
+        <element label="Windows Instant Messaging Running" max_length="100" name="windows_instant_messaging_running" type="string"/>
+        <element attributes="edge_encryption_enabled=true" label="Windows Is Behind NAT" max_length="40" name="windows_is_behind_nat" type="boolean"/>
+        <element attributes="edge_encryption_enabled=true" label="Windows Logged On" max_length="40" name="windows_logged_on" type="boolean"/>
+        <element attributes="edge_encryption_enabled=true" label="Windows Manageable Domain&#9;" max_length="40" name="windows_manageable_domain" type="boolean"/>
+        <element attributes="edge_encryption_enabled=true" label="Windows Manageable Domain - Current" max_length="40" name="windows_manageable_domain_current" type="boolean"/>
+        <element attributes="edge_encryption_enabled=true" label="Windows Manageable Local" max_length="40" name="windows_manageable_local" type="boolean"/>
+        <element attributes="edge_encryption_enabled=true" label="Windows Manageable SecureConnector" max_length="40" name="windows_manageable_secureconnector" type="boolean"/>
+        <element label="Windows Peer-to-peer Installed" max_length="100" name="windows_peer_to_peer_installed" type="string"/>
+        <element label="Windows Peer-to-peer Running" max_length="100" name="windows_peer_to_peer_running" type="string"/>
+        <element label="Windows Personal Firewall" max_length="100" name="windows_personal_firewall" type="string"/>
+        <element label="Windows Process Running" max_length="200" name="windows_process_running" type="string"/>
+        <element label="Windows Registry Value" max_length="100" name="windows_registry_value" type="string"/>
+        <element label="Windows Security Center Antivirus Status" max_length="100" name="windows_security_center_antivirus_status" type="string"/>
+        <element label="Windows Services Installed" max_length="300" name="windows_services_installed" type="string"/>
+        <element label="Windows Services Running" max_length="300" name="windows_services_running" type="string"/>
+        <element label="Windows Shared Folders" max_length="100" name="windows_shared_folders" type="string"/>
+        <element attributes="edge_encryption_enabled=true" label="Windows Updates Installed - Reboot Required" max_length="40" name="windows_updates_installed_reboot_required" type="boolean"/>
+        <element attributes="edge_encryption_enabled=true" label="Windows Update Agent Installed" max_length="40" name="windows_update_agent_installed" type="boolean"/>
+        <element label="Windows Version" max_length="100" name="windows_version" type="string"/>
+        <element label="Windows Version CPE Format" max_length="100" name="windows_version_cpe_format" type="string"/>
+        <element label="Windows Version Fine-tuned" max_length="40" name="windows_version_fine_tuned" type="string"/>
+        <element label="WLAN AP Location" max_length="40" name="wlan_ap_location" type="string"/>
+        <element label="WLAN AP Name" max_length="40" name="wlan_ap_name" type="string"/>
+        <element label="WLAN Association Status" max_length="40" name="wlan_association_status" type="string"/>
+        <element label="WLAN Authentication Method" max_length="40" name="wlan_authentication_method" type="string"/>
+        <element label="WLAN BSSID" max_length="40" name="wlan_bssid" type="string"/>
+        <element attributes="edge_encryption_enabled=true" label="WLAN Client Connectivity Status" max_length="40" name="wlan_client_connectivity_status" type="boolean"/>
+        <element label="WLAN Client Role" max_length="100" name="wlan_client_role" type="string"/>
+        <element label="WLAN Client Username" max_length="40" name="wlan_client_username" type="string"/>
+        <element label="WLAN Client User Agent" max_length="40" name="wlan_client_user_agent" type="string"/>
+        <element label="WLAN Client VLAN" max_length="40" name="wlan_client_vlan" type="string"/>
+        <element label="WLAN CTP IP" max_length="40" name="wlan_ctp_ip" type="string"/>
+        <element label="WLAN CTP Vendor" max_length="40" name="wlan_ctp_vendor" type="string"/>
+        <element label="WLAN Detected Client Type" max_length="40" name="wlan_detected_client_type" type="string"/>
+        <element label="WLAN Managing Controller" max_length="40" name="wlan_managing_controller" type="string"/>
+        <element label="WLAN Network Function" max_length="40" name="wlan_network_function" type="string"/>
+        <element label="WLAN SSID" max_length="40" name="wlan_ssid" type="string"/>
+        <element label="WLAN Target Role" max_length="40" name="wlan_target_role" type="string"/>
+        <element label="Tenant ID" max_length="100" name="x_ftpp_now_plat_forescout_tenant_id" type="string"/>
+    </element>
+</database>

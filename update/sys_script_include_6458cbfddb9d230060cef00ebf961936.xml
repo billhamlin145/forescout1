@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>public</access>
+        <active>true</active>
+        <api_name>x_ftpp_now_plat.FSActionsUtil</api_name>
+        <caller_access/>
+        <client_callable>false</client_callable>
+        <description/>
+        <name>FSActionsUtil</name>
+        <script><![CDATA[var FSActionsUtil = Class.create();
+FSActionsUtil.prototype = {
+    initialize: function() {
+		this.FSActionsWithZeroParams = ['recheck_host'];
+		this.FSActionsWithOneParams  = ['goodies_label_action', 'goodies_unlabel_action'];
+		this.FSActionsWithTwoParams  = ['add-to-group'];
+    },
+
+	getActionsWithZeroParams: function() {
+		return this.FSActionsWithZeroParams;
+	},
+
+	getActionsWithOneParams: function() {
+		return this.FSActionsWithOneParams;
+	},
+
+	getActionsWithTwoParams: function() {
+		return this.FSActionsWithTwoParams;
+	},
+
+	getNumOfActionParams: function(actionName) {
+		/* validate actionName */
+		if (actionName == null || actionName === "") {
+			gs.addErrorMessage("Empty actionName received in getNumOfActionParams()");
+			return -1;
+		}
+
+		if (this.getActionsWithZeroParams().indexOf(actionName) != -1) {
+			return 0;
+		} else if (this.getActionsWithOneParams().indexOf(actionName) != -1) {
+			return 1;
+		} else if (this.getActionsWithTwoParams().indexOf(actionName) != -1) {
+			return 2;
+		} else {
+			/* action name not found. Allow max params to be 2. This might be a manually added action by the user. */
+			gs.warn("Action name not found. Invalid action name: [" + actionName + "]?");
+			return 2;
+		}
+	},
+
+	getAllActionsLabels: function() {
+		/* retrieve all actions from 'ForeScout Supported Actions' table */
+		var actionRecord = new GlideRecord('x_ftpp_now_plat_forescout_supported_actions');
+		actionRecord.query();
+		var actionsLabels = {};
+		var isActionFound = false;
+
+		/* loop over all action records and store their labels keyed by names in a hashmap */
+		while (actionRecord.next()) {
+			var actionName  = actionRecord.name.toString();
+			var actionLabel = actionRecord.label.toString();
+			isActionFound   = true;
+			actionsLabels[actionName] = actionLabel;
+		}
+
+		if (!isActionFound) {
+			gs.addErrorMessage("No actions found in 'ForeScout Supported Actions' table.");
+			return null;
+		}
+
+		return actionsLabels;
+	},
+
+	getActionSysId: function(actionName) {
+		/* validate actionName */
+		if (actionName == null || actionName === "") {
+			gs.addErrorMessage("Empty actionName received in getActionSysId()");
+			return null;
+		}
+
+		/* retrieve action record with the given actionName from 'ForeScout Supported Actions' table */
+		var actionRecord = new GlideRecord('x_ftpp_now_plat_forescout_supported_actions');
+		actionRecord.addQuery('name', actionName);
+		actionRecord.query();
+
+		if (actionRecord.next()) {
+			return actionRecord.sys_id;
+		} else {
+			gs.addErrorMessage("Action: [" + actionName + "] not found in 'ForeScout Supported Actions' table");
+			return null;
+		}
+	},
+
+    type: 'FSActionsUtil'
+};]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-10-22 23:02:29</sys_created_on>
+        <sys_id>6458cbfddb9d230060cef00ebf961936</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>FSActionsUtil</sys_name>
+        <sys_package display_value="ForeScout App for Asset Management" source="x_ftpp_now_plat">b45f12b8db19af4006629c27db961996</sys_package>
+        <sys_policy>read</sys_policy>
+        <sys_scope display_value="ForeScout App for Asset Management">b45f12b8db19af4006629c27db961996</sys_scope>
+        <sys_update_name>sys_script_include_6458cbfddb9d230060cef00ebf961936</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2018-10-22 23:02:29</sys_updated_on>
+    </sys_script_include>
+</record_update>

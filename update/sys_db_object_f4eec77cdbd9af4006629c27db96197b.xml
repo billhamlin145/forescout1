@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_db_object">
+    <sys_db_object action="INSERT_OR_UPDATE">
+        <access>public</access>
+        <actions_access>false</actions_access>
+        <alter_access>false</alter_access>
+        <caller_access/>
+        <client_scripts_access>false</client_scripts_access>
+        <configuration_access>false</configuration_access>
+        <create_access>true</create_access>
+        <create_access_controls>true</create_access_controls>
+        <delete_access>true</delete_access>
+        <extension_model/>
+        <is_extendable>false</is_extendable>
+        <label>ForeScout Action Status Import Set</label>
+        <live_feed_enabled>false</live_feed_enabled>
+        <name>x_ftpp_now_plat_forescout_action_status_import_set</name>
+        <number_ref/>
+        <provider_class/>
+        <read_access>true</read_access>
+        <super_class display_value="Import Set Row" name="sys_import_set_row">1fd21375db312300d67144080596196a</super_class>
+        <sys_class_code/>
+        <sys_class_name>sys_db_object</sys_class_name>
+        <sys_class_path/>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-10-19 20:54:34</sys_created_on>
+        <sys_id>f4eec77cdbd9af4006629c27db96197b</sys_id>
+        <sys_mod_count>3</sys_mod_count>
+        <sys_name>ForeScout Action Status Import Set</sys_name>
+        <sys_package display_value="ForeScout App for Asset Management" source="x_ftpp_now_plat">b45f12b8db19af4006629c27db961996</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ForeScout App for Asset Management">b45f12b8db19af4006629c27db961996</sys_scope>
+        <sys_update_name>sys_db_object_f4eec77cdbd9af4006629c27db96197b</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2018-10-23 23:27:03</sys_updated_on>
+        <update_access>true</update_access>
+        <user_role display_value="x_ftpp_now_plat.integration" name="x_ftpp_now_plat.integration">1fc92f74db5daf4006629c27db961944</user_role>
+        <ws_access>true</ws_access>
+    </sys_db_object>
+</record_update>

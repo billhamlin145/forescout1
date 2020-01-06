@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>public</access>
+        <active>true</active>
+        <api_name>x_ftpp_now_plat.FSDynamicPropUpdateHandler</api_name>
+        <caller_access/>
+        <client_callable>false</client_callable>
+        <description/>
+        <name>FSDynamicPropUpdateHandler</name>
+        <script><![CDATA[var FSDynamicPropUpdateHandler = Class.create();
+FSDynamicPropUpdateHandler.prototype = {
+    initialize: function() {
+		/* constants to indicate how to obtain endpoint info from the given table */
+		this.tableNoMacAndIP  = 0;
+		this.tableHasMacAndIP = 1;
+		this.tableHasCmdbCI   = 2;
+    },
+	/*
+	 * This function receives the current and previous records of a table and sends the updated values
+	 * of any of its columns that are registered in the 'ForeScout Dynamic Properties' table.
+	 * Parameters:
+	 * - tableName: table on which the Business Rule was trigerred
+	 * - current: current record in Business Rule table
+	 * - previous: previous record in Business Rule table
+	 * - endpointInfoInTable: enum variable indicating how to obtain endpoint IP and MAC from table record
+	 */
+	sendPropUpdate : function(tableName, current, previous, endpointInfoInTable) {
+		/* validate 'endpointInfoInTable' argument */
+		if (endpointInfoInTable == this.tableNoMacAndIP) {
+			gs.warn("No MAC and IP in table. Cannot send prop update to CounterACT.");
+			return;
+		} else if (endpointInfoInTable != this.tableHasMacAndIP && endpointInfoInTable != this.tableHasCmdbCI) {
+			gs.warn("'FSDynamicPropUpdateHandler' script include called with invalid 'endpointInfoInTable' argument.");
+			return;
+		}
+
+		var jsonUtil = new global.JSON();
+		var recordTenantID;
+		var mac;
+		var ip;
+		if (endpointInfoInTable == this.tableHasMacAndIP) {
+			recordTenantID     = current.x_ftpp_now_plat_forescout_tenant_id.toString();
+			mac                = current.mac_address.toString();
+			ip                 = current.ip_address.toString();
+		} else if (endpointInfoInTable == this.tableHasCmdbCI) {
+			recordTenantID     = current.cmdb_ci.x_ftpp_now_plat_forescout_tenant_id.toString();
+			mac                = current.cmdb_ci.mac_address.toString();
+			ip                 = current.cmdb_ci.ip_address.toString();
+		}
+		// If tenant id is empty and there is only one EM configured, send to this EM. 
+		if (recordTenantID == '') {
+			var count = new GlideAggregate('x_ftpp_now_plat_forescout_counteracts');
+			count.addQuery('active', '=', 'true');
+			count.addAggregate('COUNT');
+			count.query();
+			if (count.next()) {
+				if (count.getAggregate('COUNT') > 1) {
+					gs.warn("Missing tenant id for host with mac [" + mac + "] and ip [" + ip + "]. And there are multiple CounterACTs configured. Skip sending updates.");
+					return;
+				} else if (count.getAggregate('COUNT') == 0) {
+					gs.warn("No active CounterACT configured. Skip sending updates for host with mac [" + mac +"] and ip [" + ip + "].");
+					return;
+				}
+			}
+			var emRecord = new GlideRecord('x_ftpp_now_plat_forescout_counteracts');
+			emRecord.addQuery('active', true);
+			emRecord.query();
+			emRecord.next();
+			recordTenantID = emRecord.tenant_id.toString();
+		}
+
+		var isDynamicPropFound = false;
+		var dynamicPropRecord  = new GlideRecord("x_ftpp_now_plat_forescout_dynamic_properties");
+		dynamicPropRecord.addQuery('forescout_tenant_id', recordTenantID);
+		dynamicPropRecord.query();
+		
+		var cnt               = 0;
+		var propUpdatePayload = {};
+		var propUpdates       = [];
+		while (dynamicPropRecord.next()) {
+			isDynamicPropFound   = true;
+			var dynamicPropName  = dynamicPropRecord.column_name.toString();
+			var dynamicPropTable = dynamicPropRecord.table.name.toString();
+			var dynamicPropType  = dynamicPropRecord.property_type.toString();
+
+			/* verify that the 'dynamicPropName' field exists in the business rule table record */
+			if (!current.isValidField(dynamicPropName)) {
+				gs.debug("Dynamic property: [" + dynamicPropName + "], registered on table: [" + dynamicPropTable + "] is not a valid field in Business Rule table: [" + tableName + "]. No need to send update for it.");
+				continue;
+			}
+
+			/* Don't send prop update if dynamic property value hasn't changed */
+			if (current[dynamicPropName] == previous[dynamicPropName]) {
+				gs.debug("[" + dynamicPropName + "] not changed! No need to send any prop update message to CounterACT.");
+				continue;
+			}
+
+			/* Store endpoint MAC and IP address in a hashmap */
+			var propUpdateInfo = {};
+			if (endpointInfoInTable == this.tableHasMacAndIP) {
+				propUpdatePayload.mac = current.mac_address.toString();
+				propUpdatePayload.ip  = current.ip_address.toString();
+			} else if (endpointInfoInTable == this.tableHasCmdbCI) {
+				propUpdatePayload.mac = current.cmdb_ci.mac_address.toString();
+				propUpdatePayload.ip  = current.cmdb_ci.ip_address.toString();
+			}
+
+			propUpdateInfo['counteract_tag'] = dynamicPropRecord.counteract_tag.toString();
+			propUpdateInfo['property_type']  = dynamicPropRecord.property_type.toString();
+			
+			if (dynamicPropType == 'composite') {
+				/* dynamic property of type 'reference'. Send the registered subfield values to CounteACT */
+				propUpdateInfo['property_value'] = {};
+				var dynamicPropSubfieldNames = dynamicPropRecord.subfield_names.toString();
+
+				/* 'Subfield names' is a required field for reference type dynamic property */
+				if (dynamicPropSubfieldNames == null || dynamicPropSubfieldNames.length == 0) {
+					gs.warn("Empty 'subfield names' value configured for reference dynamic property: [" + dynamicPropName + "]. Ignoring dynamic property");
+					continue;
+				}
+
+				if (current[dynamicPropName].toString() == "") {
+					/* if reference field is empty, send an empty string */
+					propUpdateInfo['property_value'] = "";
+				} else {
+					var subfieldsList = dynamicPropSubfieldNames.split(',');
+					for (var i=0; i < subfieldsList.length; i++) {
+						propUpdateInfo['property_value'][subfieldsList[i]] = current[dynamicPropName][subfieldsList[i]].toString();
+						gs.debug("subfield [" + subfieldsList[i] + "] has value [" + current[dynamicPropName][subfieldsList[i]].toString() + "]");
+					}
+				}
+			} else {
+				var fieldInternalType = current[dynamicPropName].getED().getInternalType();
+				/* if a reference field type is configured as a Single-Property on CounterACT, send its display value in prop_update */
+				if (fieldInternalType == "reference") {
+					propUpdateInfo['property_value'] = current[dynamicPropName].getDisplayValue();
+				} else {
+					propUpdateInfo['property_value'] = current[dynamicPropName].toString();
+				}
+			}
+			
+			/* Add prop update to array */
+			if ((jsonUtil.encode(propUpdates) + jsonUtil.encode(propUpdateInfo)).length > 3850) {
+				propUpdatePayload.result    = {};
+				propUpdatePayload['result'] = propUpdates;
+				var updatePartial = new GlideRecord('x_ftpp_now_plat_forescout_dynamic_properties_updates');
+				updatePartial.initialize();
+				updatePartial.counteract = recordTenantID;
+				updatePartial.active = true;
+				updatePartial.property_metadata = jsonUtil.encode(propUpdatePayload);
+				gs.debug("Adding property update [" + updatePartial.property_metadata + "] to staging table");
+				updatePartial.insert();
+				propUpdates = [];
+				cnt = 0;
+			} else {
+				gs.debug("Adding prop update for dynamic property: [" + dynamicPropRecord.label + "], table: [" + dynamicPropTable + "]");
+				propUpdates[cnt] = propUpdateInfo;
+				cnt++;
+			}
+		}
+		/* Send prop update request to CounterACT */
+		if (cnt > 0) {
+			propUpdatePayload.result    = {};
+			propUpdatePayload['result'] = propUpdates;
+			var updateRemain = new GlideRecord('x_ftpp_now_plat_forescout_dynamic_properties_updates');
+			updateRemain.initialize();
+			updateRemain.counteract = recordTenantID;
+			updateRemain.active = true;
+			updateRemain.property_metadata = jsonUtil.encode(propUpdatePayload);
+			gs.debug("Adding property update [" + updateRemain.property_metadata + "] to staging table");
+			updateRemain.insert();
+			propUpdate = [];
+			cnt = 0;
+		}
+
+		if (!isDynamicPropFound) {
+			gs.warn("No dynamic property record found in 'ForeScout Dynamic Properties' Table! No need to send any prop update message to CounterACT.");
+		}
+	},
+
+    type: 'FSDynamicPropUpdateHandler'
+};]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-10-22 23:08:52</sys_created_on>
+        <sys_id>56f9cffddb9d230060cef00ebf96193d</sys_id>
+        <sys_mod_count>8</sys_mod_count>
+        <sys_name>FSDynamicPropUpdateHandler</sys_name>
+        <sys_package display_value="ForeScout App for Asset Management" source="x_ftpp_now_plat">b45f12b8db19af4006629c27db961996</sys_package>
+        <sys_policy>read</sys_policy>
+        <sys_scope display_value="ForeScout App for Asset Management">b45f12b8db19af4006629c27db961996</sys_scope>
+        <sys_update_name>sys_script_include_56f9cffddb9d230060cef00ebf96193d</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2019-01-24 23:28:01</sys_updated_on>
+    </sys_script_include>
+</record_update>

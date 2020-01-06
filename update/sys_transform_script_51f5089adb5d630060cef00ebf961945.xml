@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_transform_script">
+    <sys_transform_script action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <map display_value="ForeScout CI Transform Map">1cc4045adb5d630060cef00ebf9619ec</map>
+        <order>100</order>
+        <script><![CDATA[(function runTransformScript(source, map, log, target /*undefined onStart*/ ) {
+
+	ignore = true;
+	
+	var deviceFunc = source.classification.toString();
+	// Customer Integration: Need set the correct target.sys_class_name according to 
+	// customer's own cmdb table environment!
+	// Set the target tables based on function.
+	if (deviceFunc.length > 0) {
+		gs.info("ForeScout - Function is: " + deviceFunc);
+		var deviceType;
+		if (/printer/i.test(deviceFunc)) {
+			target.sys_class_name = 'cmdb_ci_printer';
+		} else if (/ip phone/i.test(deviceFunc)) {
+			target.sys_class_name = 'cmdb_ci_ip_phone';
+		} else if (/ip server/i.test(deviceFunc)) {
+			target.sys_class_name = 'cmdb_ci_ip_server';
+		} else if (/appliance/i.test(deviceFunc)) {
+			target.sys_class_name = 'cmdb_ci';
+		} else if (/computer/i.test(deviceFunc)) {
+			target.sys_class_name = 'cmdb_ci_computer';
+		} else if (/mobile/i.test(deviceFunc)) {
+			target.sys_class_name = 'cmdb_ci';
+		} else if (/multimedia/i.test(deviceFunc)) {
+			target.sys_class_name = 'cmdb_ci';
+		} else if (/kvm/i.test(deviceFunc)) {
+			target.sys_class_name = 'cmdb_ci_kvm';
+		} else if (/firewall/i.test(deviceFunc)) {
+			target.sys_class_name = 'cmdb_ci_firewall_network';
+		} else if (/nat/i.test(deviceFunc)) {
+			target.sys_class_name = 'cmdb_ci_endpoint_nat';
+		} else if (/router/i.test(deviceFunc)) {
+			target.sys_class_name = 'cmdb_ci_netgear';
+		} else if (/web gateway/i.test(deviceFunc)) {
+			target.sys_class_name = 'cmdb_ci_internet_gateway';
+		} else if (/storage/i.test(deviceFunc)) {
+			target.sys_class_name = 'cmdb_ci_storage_server';
+		} else if (/monitor/i.test(deviceFunc)) {
+			target.sys_class_name = 'cmdb_ci_monitoring_hardware';
+		} else {
+			target.sys_class_name = 'cmdb_ci';
+		}
+	} else {
+		target.sys_class_name = 'cmdb_ci';
+		gs.info("ForeScout - No function classification value from CounterACT");
+	}	
+})(source, map, log, target);]]></script>
+        <sys_class_name>sys_transform_script</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-10-23 22:07:53</sys_created_on>
+        <sys_id>51f5089adb5d630060cef00ebf961945</sys_id>
+        <sys_mod_count>3</sys_mod_count>
+        <sys_name>onBefore</sys_name>
+        <sys_package display_value="ForeScout App for Asset Management" source="x_ftpp_now_plat">b45f12b8db19af4006629c27db961996</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ForeScout App for Asset Management">b45f12b8db19af4006629c27db961996</sys_scope>
+        <sys_update_name>sys_transform_script_51f5089adb5d630060cef00ebf961945</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2018-12-13 23:54:29</sys_updated_on>
+        <when>onBefore</when>
+    </sys_transform_script>
+</record_update>

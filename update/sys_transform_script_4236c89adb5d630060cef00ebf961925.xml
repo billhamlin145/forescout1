@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_transform_script">
+    <sys_transform_script action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <map display_value="ForeScout CI Transform Map">1cc4045adb5d630060cef00ebf9619ec</map>
+        <order>100</order>
+        <script><![CDATA[(function runTransformScript(source, map, log, target /*undefined onStart*/ ) {
+	gs.info("Running onAfter script");
+	
+	var insert = false;
+	
+	var mac = source.mac.toString();
+	var tenant_id = source.x_ftpp_now_plat_forescout_tenant_id.toString();
+	var ip  = source.ip.toString();
+	
+	//sanity check on the mac and tenant id.
+	if (mac.length == 0) {
+		gs.info('ForeScout - NO mac address, row ignored');
+		return;
+	}
+	if (tenant_id == null || tenant_id.length == 0) {
+		gs.info('ForeScout - No tenant id, row ignored');
+		return;
+	}
+	gs.debug("ForeScout - target's mac address: " + mac);
+	var targetTable = target.sys_class_name.toString(); 
+	// Check existence
+	var updateRecord = new GlideRecord('cmdb_ci');
+	updateRecord.orderByDesc('sys_updated_on');
+	var qc1 = updateRecord.addQuery('mac_address', 'CONTAINS', mac);
+	var qc2 = updateRecord.addQuery('x_ftpp_now_plat_forescout_tenant_id', tenant_id);
+	qc2.addOrCondition('x_ftpp_now_plat_forescout_tenant_id', '');
+	updateRecord.query();
+	var sys_id;
+	if (updateRecord.next()) {
+		sys_id = updateRecord.sys_id.toString();
+		gs.debug("ForeScout - Record " + mac + " exists in cmdb_ci. sys_id is " + sys_id);
+		if (targetTable != updateRecord.sys_class_name.toString()) {
+			updateRecord.sys_class_name = targetTable;
+			updateRecord.update();
+			gs.debug("Move record " + mac + " to table " + targetTable);
+		}
+	} else {
+		gs.info("ForeScout - Record " + mac + " doesn't exist in cmdb_ci.");
+		insert = true;
+	}
+	
+	// Customer Integration: Need to map the correct fields into the corresponding tables
+	// which is set in target.sys_class_name in onBefore script
+	/* By default, the insert and update will use MAC address as the identifier
+	 If customer want to use Identifier engine to update, please uncomment line 47-48 and line 157-219
+	 and change useIdentification to be true*/
+	//var useIdentification = true;
+	//if (!useIdentification) {
+	updateRecord = new GlideRecord(targetTable);
+	if (insert) {
+		updateRecord.initialize();
+		updateRecord.mac_address = mac;
+	} else {
+		if (updateRecord.get(sys_id)) {
+			updateRecord.sys_class_name = targetTable;
+		}
+	}
+	// Set name field of CMDB CI to either nbthost, IP or MAC
+	if (source.hostname != null && source.hostname != "") {
+		updateRecord.name = source.hostname.toString();
+	} else if (ip != null && ip != "") {
+		updateRecord.name = ip;
+	} else if (mac != null && mac != "") {
+		updateRecord.name = mac;
+	}
+	gs.debug('update Record name is ' + updateRecord.name);
+	// If discovery source is empty, set discovery source to be ForeScout
+	if (updateRecord.discovery_source == null || updateRecord.discovery_source == '') {
+		updateRecord.discovery_source = 'ForeScout';
+	}
+	// If tenant id is empty, set tenant id
+	if (updateRecord.x_ftpp_now_plat_forescout_tenant_id == null || updateRecord.x_ftpp_now_plat_forescout_tenant_id == '') {
+		updateRecord.x_ftpp_now_plat_forescout_tenant_id = tenant_id;
+	}
+	// set fields for different category
+	if (targetTable == 'cmdb_ci_computer') {
+		gs.debug("ForeScout - Updating record in cmdb_ci_computer");
+	    updateRecord.ip_address = ip;
+		updateRecord.os = source.osfingerprint;
+		// Example to map one string to multiple columns
+		// eg: before: Windows 7 64-bit Ultimate Service Pack 1
+		// eg: after: OS Version: Windows 7 64-bit Ultimate; OS Service Pack: Service Pack 1
+		var re = /(.*)(Service Pack.*)/i;
+		var osFields = re.exec(source.osfingerprint);
+		if (!osFields) {
+			updateRecord.os_version = "";
+			updateRecord.os_service_pack = "";
+		} else {
+			updateRecord.os_version = osFields[1];
+			updateRecord.os_service_pack = osFields[2];
+		}
+		updateRecord.fqdn = source.dnsname;
+		var softwares = source.windows_applications_installed.toString();
+		if (softwares.length > 0) {
+			// example to map json format composite list property
+			var json = new global.JSON();
+			var softwareArray = json.decode(softwares);
+			var i;
+			for (i=0; i<softwareArray.length; i++) {
+				var software = softwareArray[i];
+				var softwareName = software['app_name'];
+				var softwareRecord = new GlideRecord("cmdb_software_instance");
+				softwareRecord.addQuery("name", softwareName);
+				softwareRecord.query();
+				if (!softwareRecord.next()) {
+					softwareRecord.name = softwareName;
+					var ret = softwareRecord.insert();
+		            gs.debug("ForeScout - software Inserted: " + ret);
+				}
+			}
+		}
+	}
+	else if (targetTable == 'cmdb_ci_kvm') {
+		gs.debug("ForeScout - Updating record in cmdb_ci_kvm");
+		updateRecord.ip_address = ip;
+		updateRecord.sys_domain = source.netbiosdomain;
+		updateRecord.fqdn = source.dnsname;
+		updateRecord.tcp_port = source.open_ports;
+	} else if (targetTable == 'cmdb_ci_endpoint_nat') {
+		gs.debug("ForeScout - Updating record in cmdb_ci_endpoint_nat");
+		updateRecord.host_name = source.hostname;
+		updateRecord.ip_address = ip;
+		updateRecord.sys_domain = source.netbiosdomain;
+		updateRecord.fqdn = source.dnsname;
+	} else if (targetTable == 'cmdb_ci_firewall_network') {
+		gs.debug("ForeScout - Updating record in cmdb_ci_firewall_network");
+		updateRecord.ip_address = ip;
+		updateRecord.sys_domain = source.netbiosdomain;
+		updateRecord.fqdn = source.dnsname;
+		updateRecord.device_type = source.classification;
+		
+	} else if (targetTable == 'cmdb_ci_storage_server') {
+		gs.debug("ForeScout - Updating record in cmdb_ci_storage_server");
+		updateRecord.ip_address = ip;
+		updateRecord.sys_domain = source.netbiosdomain;
+		updateRecord.fqdn = source.dnsname;
+	} else if (targetTable == 'cmdb_ci_netgear') {
+		gs.debug("ForeScout - Updating record in cmdb_ci_vm_instance");
+		updateRecord.sys_domain = source.netbiosdomain;
+		updateRecord.ip_address = ip;
+		updateRecord.fqdn = source.dnsname;
+	} else if (targetTable.startsWith('cmdb_ci')) {
+		gs.debug("ForeScout - Updating record in cmdb_ci child table");
+		updateRecord.sys_domain = source.netbiosdomain;
+		updateRecord.ip_address = ip;
+		updateRecord.fqdn = source.dnsname;
+	} else {
+		gs.info("ForeScout - No target Tables classification value from CounterACT");
+	}
+	// Insert or update
+	if (insert) {
+		var sysIdInsert = updateRecord.insert();
+		gs.debug("ForeScout - Inserted: " + sysIdInsert);
+	} else {
+		var sysIdUpdate = updateRecord.update();
+		gs.debug("ForeScout - Updated: " + sysIdUpdate);
+	}
+	/*} else {
+		var payload = {};
+		payload.mac_address = source.mac.toString();
+		if (source.hostname != null && source.hostname != "") {
+			payload.name = source.hostname.toString();
+		} else if (ip != null && ip != "") {
+			payload.name = ip;
+		} else if (mac != null && mac != "") {
+			payload.name = mac;
+		}
+		// Please create 'ForeScout' discovery source in sys_choice table and uncomment the following line
+		//payload.discovery_source = 'ForeScout';
+		payload.x_ftpp_now_plat_forescout_tenant_id = tenant_id;
+		if (targetTable == 'cmdb_ci_computer') {
+			gs.debug("ForeScout - Updating record in cmdb_ci_computer");
+			payload.ip_address = source.ip.toString();
+			payload.os = source.osfingerprint.toString();
+			payload.fqdn = source.dnsname.toString();
+		} else if (targetTable == 'cmdb_ci_kvm') {
+			gs.debug("ForeScout - Updating record in cmdb_ci_endpoint_nat");
+			payload.host_name = source.hostname;
+			payload.ip_address = ip;
+			payload.sys_domain = source.netbiosdomain;
+			payload.fqdn = source.dnsname;
+		} else if (targetTable == 'cmdb_ci_firewall_network') {
+			gs.debug("ForeScout - Updating record in cmdb_ci_firewall_network");
+			payload.ip_address = ip;
+			payload.sys_domain = source.netbiosdomain;
+			payload.fqdn = source.dnsname;
+			payload.device_type = source.classification;
+		} else if (targetTable == 'cmdb_ci_storage_server') {
+			gs.debug("ForeScout - Updating record in cmdb_ci_storage_server");
+			payload.ip_address = ip;
+			payload.sys_domain = source.netbiosdomain;
+			payload.fqdn = source.dnsname;
+		} else if (targetTable == 'cmdb_ci_netgear') {
+			gs.debug("ForeScout - Updating record in cmdb_ci_vm_instance");
+			payload.sys_domain = source.netbiosdomain;
+			payload.ip_address = ip;
+			payload.fqdn = source.dnsname;
+		} else if (targetTable.startsWith('cmdb_ci')) {
+			gs.debug("ForeScout - Updating record in cmdb_ci child table");
+			payload.sys_domain = source.netbiosdomain;
+			payload.ip_address = ip;
+			payload.fqdn = source.dnsname;
+		} else {
+			gs.info("ForeScout - No target Tables classification value from CounterACT");
+		}
+		var item = {};
+		item.className = targetTable;
+		item.values = payload;
+		var items = [item];
+		var record = {};
+		record.items = items;
+		gs.debug("ForeScout - Record: ", record);
+		var jsonUtil = new global.JSON();
+		var input = jsonUtil.encode(record);
+		gs.debug("ForeScout - encoded payload: " + input);
+		// to use Identification Engine Scriptable API, import the script include update set downloaded from CounterACT
+		var fsSNC = new global.fsSNC();
+		fsSNC.identificationAndReconcilation(input);
+		gs.debug("Updated using identification engine");
+	}*/
+})(source, map, log, target);]]></script>
+        <sys_class_name>sys_transform_script</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-10-23 22:08:59</sys_created_on>
+        <sys_id>4236c89adb5d630060cef00ebf961925</sys_id>
+        <sys_mod_count>14</sys_mod_count>
+        <sys_name>onAfter</sys_name>
+        <sys_package display_value="ForeScout App for Asset Management" source="x_ftpp_now_plat">b45f12b8db19af4006629c27db961996</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ForeScout App for Asset Management">b45f12b8db19af4006629c27db961996</sys_scope>
+        <sys_update_name>sys_transform_script_4236c89adb5d630060cef00ebf961925</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2019-01-25 16:41:49</sys_updated_on>
+        <when>onAfter</when>
+    </sys_transform_script>
+</record_update>
